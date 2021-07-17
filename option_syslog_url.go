@@ -7,7 +7,7 @@ import (
 
 type WithSyslogDaemonURL string
 
-func (w WithSyslogDaemonURL) applySyslog(l *SyslogLogger) error {
+func (w WithSyslogDaemonURL) applySyslog(l *syslogLogger) error {
 	if w == "" {
 		l.network, l.addr = "", ""
 		return nil
@@ -22,7 +22,7 @@ func (w WithSyslogDaemonURL) applySyslog(l *SyslogLogger) error {
 	return nil
 }
 
-func (w WithSyslogDaemonURL) applyStdLog(*StdLevelLogger) error {
+func (w WithSyslogDaemonURL) applyStdLog(*stdLevelLogger) error {
 	return ErrIncompatibleOption
 }
 

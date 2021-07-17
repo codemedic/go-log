@@ -6,12 +6,12 @@ type withLevel struct {
 	level Level
 }
 
-func (w withLevel) applySyslog(l *SyslogLogger) error {
+func (w withLevel) applySyslog(l *syslogLogger) error {
 	l.level = w.level
 	return nil
 }
 
-func (w withLevel) applyStdLog(l *StdLevelLogger) error {
+func (w withLevel) applyStdLog(l *stdLevelLogger) error {
 	l.level = w.level
 	return nil
 }

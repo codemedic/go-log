@@ -6,11 +6,11 @@ type withWriter struct {
 	writer io.WriteCloser
 }
 
-func (w withWriter) applySyslog(*SyslogLogger) error {
+func (w withWriter) applySyslog(*syslogLogger) error {
 	return ErrIncompatibleOption
 }
 
-func (w withWriter) applyStdLog(l *StdLevelLogger) error {
+func (w withWriter) applyStdLog(l *stdLevelLogger) error {
 	l.writer = w.writer
 	return nil
 }

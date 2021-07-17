@@ -17,34 +17,34 @@ var stdLogDefaultOptions, _ = Options(
 	WithWriter(os.Stderr),
 )
 
-type StdLogOption interface {
-	applyStdLog(*StdLevelLogger) error
+type stdLogOption interface {
+	applyStdLog(*stdLevelLogger) error
 }
 
-type StdLevelLogger struct {
+type stdLevelLogger struct {
 	level     Level
 	flags     flags
 	writer    io.WriteCloser
 	stdLogger *stdlog.Logger
 }
 
-func (l *StdLevelLogger) Close() {
+func (l *stdLevelLogger) Close() {
 	l.level = Disabled
 	_ = l.writer.Close()
 }
 
-func (l *StdLevelLogger) Level() Level {
+func (l *stdLevelLogger) Level() Level {
 	return l.level
 }
 
-func (l *StdLevelLogger) Logf(level Level, format string, value ...interface{}) {
+func (l *stdLevelLogger) Logf(level Level, format string, value ...interface{}) {
 	if level.IsEnabled(l.level) {
 		_ = l.stdLogger.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
 	}
 }
 
 func NewStdLog(opt ...Option) (_ Log, err error) {
-	l := &StdLevelLogger{
+	l := &stdLevelLogger{
 		flags: stdlog.LstdFlags,
 	}
 

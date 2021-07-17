@@ -4,12 +4,12 @@ import "log"
 
 type WithUTCTimestamp bool
 
-func (w WithUTCTimestamp) applySyslog(l *SyslogLogger) error {
+func (w WithUTCTimestamp) applySyslog(l *syslogLogger) error {
 	l.flags.enable(log.LUTC, bool(w))
 	return nil
 }
 
-func (w WithUTCTimestamp) applyStdLog(l *StdLevelLogger) error {
+func (w WithUTCTimestamp) applyStdLog(l *stdLevelLogger) error {
 	l.flags.enable(log.LUTC, bool(w))
 	return nil
 }

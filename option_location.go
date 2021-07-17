@@ -2,12 +2,12 @@ package log
 
 type WithSourceLocation bool
 
-func (w WithSourceLocation) applySyslog(l *SyslogLogger) error {
+func (w WithSourceLocation) applySyslog(l *syslogLogger) error {
 	l.flags.enable(DefaultLocationFormat, bool(w))
 	return nil
 }
 
-func (w WithSourceLocation) applyStdLog(l *StdLevelLogger) error {
+func (w WithSourceLocation) applyStdLog(l *stdLevelLogger) error {
 	l.flags.enable(DefaultLocationFormat, bool(w))
 	return nil
 }

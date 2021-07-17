@@ -4,12 +4,12 @@ import "log"
 
 type WithMicrosecondsTimestamp bool
 
-func (w WithMicrosecondsTimestamp) applySyslog(l *SyslogLogger) error {
+func (w WithMicrosecondsTimestamp) applySyslog(l *syslogLogger) error {
 	l.flags.enable(log.Lmicroseconds, bool(w))
 	return nil
 }
 
-func (w WithMicrosecondsTimestamp) applyStdLog(l *StdLevelLogger) error {
+func (w WithMicrosecondsTimestamp) applyStdLog(l *stdLevelLogger) error {
 	l.flags.enable(log.Lmicroseconds, bool(w))
 	return nil
 }

@@ -6,11 +6,11 @@ import (
 	"log/syslog"
 )
 
-type SyslogOption interface {
-	applySyslog(*SyslogLogger) error
+type syslogOption interface {
+	applySyslog(*syslogLogger) error
 }
 
-type SyslogLogger struct {
+type syslogLogger struct {
 	level   Level
 	flags   flags
 	tag     string
@@ -20,7 +20,7 @@ type SyslogLogger struct {
 	closers []func()
 }
 
-func (s *SyslogLogger) Close() {
+func (s *syslogLogger) Close() {
 	s.level = Disabled
 	for i, closer := range s.closers {
 		s.loggers[i] = nil
@@ -28,11 +28,11 @@ func (s *SyslogLogger) Close() {
 	}
 }
 
-func (s *SyslogLogger) Level() Level {
+func (s *syslogLogger) Level() Level {
 	return s.level
 }
 
-func (s *SyslogLogger) Logf(level Level, format string, value ...interface{}) {
+func (s *syslogLogger) Logf(level Level, format string, value ...interface{}) {
 	if !level.IsEnabled(s.level) {
 		return
 	}
@@ -52,7 +52,7 @@ var syslogDefaultOptions, _ = Options(
 )
 
 func NewSyslog(opt ...Option) (_ Log, err error) {
-	l := &SyslogLogger{}
+	l := &syslogLogger{}
 
 	// apply default options first
 	if err = syslogDefaultOptions.applySyslog(l); err != nil {

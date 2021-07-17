@@ -12,15 +12,15 @@ var ErrBadSyslogDaemonURL = errors.New("bad syslog daemon url")
 var ErrUnknownOption = errors.New("unknown option")
 
 type Option interface {
-	StdLogOption
-	SyslogOption
+	stdLogOption
+	syslogOption
 }
 
 type OptionLoader func() (Option, error)
 
 type options []Option
 
-func (o options) applySyslog(l *SyslogLogger) error {
+func (o options) applySyslog(l *syslogLogger) error {
 	for _, opt := range o {
 		if err := opt.applySyslog(l); err != nil {
 			return err
@@ -30,7 +30,7 @@ func (o options) applySyslog(l *SyslogLogger) error {
 	return nil
 }
 
-func (o options) applyStdLog(l *StdLevelLogger) error {
+func (o options) applyStdLog(l *stdLevelLogger) error {
 	for _, opt := range o {
 		if err := opt.applyStdLog(l); err != nil {
 			return err
