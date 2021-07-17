@@ -20,7 +20,7 @@ func main() {
 		wg.Add(1)
 		go func() {
 			l.Debug("starting up...")
-			for j := 0; j < 10000; j++ {
+			for j := 0; j < 100; j++ {
 				l.Info("hello world")
 			}
 			wg.Done()

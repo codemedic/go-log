@@ -2,24 +2,16 @@ package log
 
 import "os"
 
-type withLevel struct {
-	level Level
-}
+type WithLevel Level
 
-func (w withLevel) applySyslog(l *syslogLogger) error {
-	l.level = w.level
+func (w WithLevel) applySyslog(l *syslogLogger) error {
+	l.level = Level(w)
 	return nil
 }
 
-func (w withLevel) applyStdLog(l *stdLevelLogger) error {
-	l.level = w.level
+func (w WithLevel) applyStdLog(l *stdLevelLogger) error {
+	l.level = Level(w)
 	return nil
-}
-
-func WithLevel(level Level) Option {
-	return withLevel{
-		level: level,
-	}
 }
 
 func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
@@ -37,4 +29,4 @@ func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 	}
 }
 
-var _ Option = withLevel{}
+var _ Option = WithLevel(Debug)
