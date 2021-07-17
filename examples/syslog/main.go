@@ -6,12 +6,11 @@ import (
 )
 
 func main() {
-	l := log.Must(log.NewStdLog(
+	l := log.Must(log.NewSyslog(
 		log.OptionsMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-			log.WithUTCTimestampFromEnv("LOG_UTC", true),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", true),
-			log.WithMicrosecondsTimestamp(true),
+			log.WithSyslogTag("test-syslog"),
 		))))
 	defer l.Close()
 

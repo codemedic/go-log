@@ -1,8 +1,13 @@
 package log
 
+import (
+	"fmt"
+)
+
 type LevelLogger interface {
 	Level() Level
 	Logf(level Level, format string, value ...interface{})
+	Close()
 }
 
 type Log struct {
@@ -89,4 +94,18 @@ func (l Log) DebugEnabled() bool {
 	}
 
 	return Debug.IsEnabled(l.logger.Level())
+}
+
+func (l Log) Close() {
+	if l.logger != nil {
+		l.logger.Close()
+	}
+}
+
+func Must(l Log, err error) Log {
+	if err != nil {
+		panic(fmt.Errorf("failed to initialise logger; error:%w", err))
+	}
+
+	return l
 }

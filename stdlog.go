@@ -2,39 +2,65 @@ package log
 
 import (
 	"fmt"
+	"io"
 	stdlog "log"
+	"os"
 )
 
-var LocationFormat = stdlog.Lshortfile
+var DefaultLocationFormat = stdlog.Lshortfile
 
-type StdLevelLogger Level
+var stdLogDefaultOptions, _ = Options(
+	WithUTCTimestamp(true),
+	WithMicrosecondsTimestamp(true),
+	WithSourceLocation(true),
+	WithLevel(Debug),
+	WithWriter(os.Stderr),
+)
 
-func (l StdLevelLogger) Level() Level {
-	return Level(l)
+type StdLogOption interface {
+	applyStdLog(*StdLevelLogger) error
 }
 
-func (l StdLevelLogger) Logf(level Level, format string, value ...interface{}) {
-	if level.IsEnabled(Level(l)) {
-		_ = stdlog.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
+type StdLevelLogger struct {
+	level     Level
+	flags     flags
+	writer    io.WriteCloser
+	stdLogger *stdlog.Logger
+}
+
+func (l *StdLevelLogger) Close() {
+	l.level = Disabled
+	_ = l.writer.Close()
+}
+
+func (l *StdLevelLogger) Level() Level {
+	return l.level
+}
+
+func (l *StdLevelLogger) Logf(level Level, format string, value ...interface{}) {
+	if level.IsEnabled(l.level) {
+		_ = l.stdLogger.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
 	}
 }
 
-func newStdLog(opt *Options) (LevelLogger, error) {
-	flags := stdlog.LstdFlags
-
-	if opt.UTC {
-		flags |= stdlog.LUTC
+func NewStdLog(opt ...Option) (_ Log, err error) {
+	l := &StdLevelLogger{
+		flags: stdlog.LstdFlags,
 	}
 
-	if opt.Microseconds {
-		flags |= stdlog.Lmicroseconds
+	// apply default options first
+	if err = stdLogDefaultOptions.applyStdLog(l); err != nil {
+		return
 	}
 
-	if opt.Location {
-		flags |= LocationFormat
+	// apply any specified options
+	for _, o := range opt {
+		if err = o.applyStdLog(l); err != nil {
+			return
+		}
 	}
 
-	stdlog.SetFlags(flags)
+	l.stdLogger = stdlog.New(l.writer, "", int(l.flags))
 
-	return StdLevelLogger(opt.Level), nil
+	return Log{logger: l}, nil
 }
