@@ -75,14 +75,19 @@ func New(opt ...Option) (log Log, err error) {
 	return Log{logger: l}, nil
 }
 
+// NewStderr creates a new logger that logs to stderr. Additional options can be specified using opt.
 func NewStderr(opt ...Option) (Log, error) {
-	return New(options(opt).appendCopy(WithWriter(os.Stderr)))
+	return New(options(opt), WithWriter(os.Stderr))
 }
 
+// NewStdout creates a new logger that logs to stdout. Additional options can be specified using opt.
 func NewStdout(opt ...Option) (Log, error) {
-	return New(options(opt).appendCopy(WithWriter(os.Stdout)))
+	return New(options(opt), WithWriter(os.Stdout))
 }
 
+// NewLogfile creates a new logger that logs to the specified file. A file is created
+// with permissions specified in perm, if the file does not exist. If the file already
+// exists, new records are appended to it. Additional options can be specified using opt.
 func NewLogfile(file string, perm os.FileMode, opt ...Option) (log Log, err error) {
 	var f io.WriteCloser
 	if f, err = os.OpenFile(file, os.O_WRONLY|os.O_APPEND|os.O_CREATE, perm); err != nil {
@@ -90,5 +95,5 @@ func NewLogfile(file string, perm os.FileMode, opt ...Option) (log Log, err erro
 		return
 	}
 
-	return New(options(opt).appendCopy(WithWriter(f)))
+	return New(options(opt), WithWriter(f))
 }

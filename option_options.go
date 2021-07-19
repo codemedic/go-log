@@ -2,14 +2,6 @@ package log
 
 type options []Option
 
-func (o options) appendCopy(opt ...Option) options {
-	n := options{}
-	n.append(o...)
-	n.append(opt...)
-
-	return n
-}
-
 func (o *options) append(opt ...Option) {
 	*o = append(*o, opt...)
 }
