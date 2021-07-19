@@ -9,7 +9,7 @@ import (
 
 func ExampleNewStderr() {
 	l := log.Must(log.NewStderr(
-		log.OptionMust(log.Options(
+		log.OptionsMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithUTCTimestampFromEnv("LOG_UTC", true),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
@@ -20,7 +20,7 @@ func ExampleNewStderr() {
 
 func ExampleNewLogfile() {
 	l := log.Must(log.NewLogfile("/tmp/test-logfile.log", 0644,
-		log.OptionMust(log.Options(
+		log.OptionsMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithUTCTimestampFromEnv("LOG_UTC", true),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
@@ -31,7 +31,7 @@ func ExampleNewLogfile() {
 
 func ExampleNewSyslog() {
 	l := log.Must(log.NewSyslog(
-		log.OptionMust(log.Options(
+		log.OptionsMust(log.Options(
 			// set the log-level dynamically from the environment
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			// set the syslog tag

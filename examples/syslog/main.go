@@ -7,7 +7,7 @@ import (
 
 func main() {
 	l := log.Must(log.NewSyslog(
-		log.OptionMust(log.Options(
+		log.OptionsMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
 			log.WithSyslogTag("test-syslog"),

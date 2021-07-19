@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 )
@@ -10,15 +9,6 @@ import (
 type Option interface {
 	stdLogOption
 	syslogOption
-}
-
-// OptionMust checks for err to be not nil and panics. If err is nil o is returned.
-func OptionMust(o Option, err error) Option {
-	if err != nil {
-		panic(fmt.Errorf("failed to load options; error:%w", err))
-	}
-
-	return o
 }
 
 func boolFromEnv(env string, defaultValue bool) (bool, error) {

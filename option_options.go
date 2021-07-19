@@ -1,5 +1,7 @@
 package log
 
+import "fmt"
+
 type options []Option
 
 func (o *options) append(opt ...Option) {
@@ -53,6 +55,24 @@ func Options(opt ...interface{}) (Option, error) {
 	}
 
 	return opts, nil
+}
+
+// OptionsMust checks for errors from dynamic OptionLoader combined through Options.
+// It panics if err is not nil otherwise returns o.
+//
+// Example:
+//   l, err := log.NewSyslog(
+//     log.OptionsMust( // panic on errors from decoding environment variable LOG_LEVEL
+//       log.Options(
+//         log.WithLevelFromEnv("LOG_LEVEL", log.Info),
+//         log.WithMicrosecondsTimestamp,
+//   )))
+func OptionsMust(o Option, err error) Option {
+	if err != nil {
+		panic(fmt.Errorf("failed to load options; error:%w", err))
+	}
+
+	return o
 }
 
 var _ Option = options{}

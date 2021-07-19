@@ -17,11 +17,11 @@ func Test_options_append(t *testing.T) {
 	}{
 		{
 			name: "",
-			o:    OptionMust(Options(WithLevel(Debug))).(options),
+			o:    OptionsMust(Options(WithLevel(Debug))).(options),
 			args: args{
 				opt: []Option{WithLevel(Info)},
 			},
-			after: OptionMust(Options(
+			after: OptionsMust(Options(
 				WithLevel(Debug),
 				WithLevel(Info),
 			)).(options),
