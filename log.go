@@ -119,8 +119,8 @@ func (l Log) Fatal(message string) {
 
 // DebugEnabled checks if DEBUG level is enabled for the logger.
 // It can be used to check before performing any extra processing to generate data
-// purely for logging, thereby avoiding the extra processing when DEBUG level is
-// disabled.
+// that is purely for logging, thereby avoiding the extra processing when DEBUG
+// level is disabled.
 //
 // Example:
 //   if logger.DebugEnabled() {
@@ -135,15 +135,15 @@ func (l Log) DebugEnabled() bool {
 	return Debug.IsEnabled(l.logger.Level())
 }
 
-// Close disables and closed the logger, freeing up any resources allocated to the logger.
-// Once closed, the logger will remain safe to use (free from panics) but disabled.
+// Close disables and closes the logger, freeing up any resources allocated to the logger.
+// Once closed the logger will be disabled but it will remain safe to use (free from panics).
 func (l Log) Close() {
 	if l.logger != nil {
 		l.logger.Close()
 	}
 }
 
-// Must ensures that a Log instance was initialised without error. If there is an error it panics.
+// Must ensures that a Log instance was initialised without error; panics if there was an error.
 func Must(l Log, err error) Log {
 	if err != nil {
 		panic(fmt.Errorf("failed to initialise logger; %w", err))
