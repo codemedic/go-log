@@ -12,7 +12,18 @@ func ExampleNewStderr() {
 		log.OptionsMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithUTCTimestampFromEnv("LOG_UTC", true),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			log.WithSourceLocationDisabled,
+			log.WithMicrosecondsTimestamp,
+		))))
+	defer l.Close()
+}
+
+func ExampleNewStdout() {
+	l := log.Must(log.NewStdout(
+		log.OptionsMust(log.Options(
+			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
+			log.WithUTCTimestampFromEnv("LOG_UTC", true),
+			log.WithSourceLocationLong,
 			log.WithMicrosecondsTimestamp,
 		))))
 	defer l.Close()

@@ -5,7 +5,7 @@
 
 GoLog adds level based logging to logger(s) from standard library.
 
-GoLog's API is designed be expressive for configuration with sensible defaults and to be easy to use.
+GoLog's API is designed be expressive for configuration, with sensible defaults and to be easy to use.
 
 ## Installation
 
@@ -59,6 +59,6 @@ Warningf(format string, value ...interface{})
 Errorf(format string, value ...interface{})
 ```
 
-### Settings aka Options
+### Options aka Settings
 
-See [documentation](tbd) for all available settings.
+See [documentation](https://pkg.go.dev/github.com/codemedic/go-log#Option) for all available `Options`.
