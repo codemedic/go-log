@@ -12,13 +12,18 @@ type syslogOption interface {
 }
 
 type syslogLogger struct {
-	level   Level
-	flags   flags
-	tag     string
-	addr    string
-	network string
-	loggers []*stdlog.Logger
-	closers []func()
+	level      Level
+	flags      flags
+	printLevel Level
+	tag        string
+	addr       string
+	network    string
+	loggers    []*stdlog.Logger
+	closers    []func()
+}
+
+func (s *syslogLogger) PrintLevel() Level {
+	return s.printLevel
 }
 
 func (s *syslogLogger) Close() {

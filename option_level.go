@@ -39,4 +39,25 @@ func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 	}
 }
 
+type withPrintLevel Level
+
+func (w withPrintLevel) applySyslog(l *syslogLogger) error {
+	l.printLevel = Level(w)
+	return nil
+}
+
+func (w withPrintLevel) applyStdLog(l *stdLogger) error {
+	l.printLevel = Level(w)
+	return nil
+}
+
+// WithPrintLevel specifies the level for log.Print and log.Printf.
+//
+// Example:
+//   l, err := log.NewSyslog(WithPrintLevel(Info))
+func WithPrintLevel(level Level) Option {
+	return withPrintLevel(level)
+}
+
 var _ Option = withLevel(Debug)
+var _ Option = withPrintLevel(Debug)

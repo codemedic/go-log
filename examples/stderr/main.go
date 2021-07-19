@@ -11,6 +11,7 @@ func main() {
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithUTCTimestampFromEnv("LOG_UTC", true),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			log.WithPrintLevel(log.Info),
 			log.WithMicrosecondsTimestamp,
 		))))
 	defer l.Close()
@@ -28,4 +29,6 @@ func main() {
 	}
 
 	wg.Wait()
+
+	l.Print("done")
 }

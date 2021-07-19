@@ -32,11 +32,12 @@ func ExampleNewLogfile() {
 func ExampleNewSyslog() {
 	l := log.Must(log.NewSyslog(
 		log.OptionMust(log.Options(
+			// set the log-level dynamically from the environment
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			// set the syslog tag
 			log.WithSyslogTag("test-syslog"),
-			// the default as provided by the standard library; this is just for demonstration
-			log.WithSyslogDaemonURL("unixgram:///dev/log"),
+			// write to syslog server over UDP
+			log.WithSyslogDaemonURL("udp://syslog.acme.com:514"),
 		))))
 	defer l.Close()
 }
@@ -49,17 +50,17 @@ func Example() {
 	l.Debugf("formatted %s message", "debug")
 
 	l.Info("informational message")
-	l.Debugf("formatted %s message", "informational")
+	l.Infof("formatted %s message", "informational")
 
 	l.Warning("warning message")
 	l.Warningf("formatted %s message", "warning")
 
 	l.Error("error message")
-	l.Debugf("formatted %v message", errors.New("error"))
+	l.Errorf("formatted %v message", errors.New("error"))
 
 	if l.DebugEnabled() {
-		// Deriving debug data can cost memory, cpu or both. Do it only if the data is
-		// not going to be thrown away by the logger due to a higher threshold log-level.
+		// In cases where deriving debug data can be, costing memory, cpu or both, do it
+		// only if the data is not going to be thrown away by the logger.
 		data := rand.Int()
 		l.Debugf("data: %d", data)
 	}

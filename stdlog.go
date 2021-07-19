@@ -14,6 +14,7 @@ var commonOptions, _ = Options(
 	WithMicrosecondsTimestamp,
 	WithSourceLocationShort,
 	WithLevel(Debug),
+	WithPrintLevel(Debug),
 )
 
 type stdLogOption interface {
@@ -21,10 +22,15 @@ type stdLogOption interface {
 }
 
 type stdLogger struct {
-	level  Level
-	flags  flags
-	writer io.WriteCloser
-	logger *stdlog.Logger
+	level      Level
+	flags      flags
+	printLevel Level
+	writer     io.WriteCloser
+	logger     *stdlog.Logger
+}
+
+func (l *stdLogger) PrintLevel() Level {
+	return l.printLevel
 }
 
 // Close disables and closed the logger, freeing up resources.
