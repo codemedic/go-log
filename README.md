@@ -20,22 +20,17 @@ To get started, import the library and use one of the constructor functions, wra
 ```go
 package main
 
-import (
-	"errors"
-	"math/rand"
-	
-	"github.com/codemedic/go-log"
-)
+import "github.com/codemedic/go-log"
 
 func main() {
-	// create syslog logger
-	l := log.Must(log.NewSyslog())
-	
-	// make sure resources are freed up when we are done
-	defer l.Close()
+  // create syslog logger
+  l := log.Must(log.NewSyslog())
+  
+  // make sure resources are freed up when we are done
+  defer l.Close()
 
-	// hello to the world
-	l.Print("hello world!")
+  // hello to the world
+  l.Print("hello world!")
 }
 
 // Output: 2021/07/19 07:57:57.936834 main.go:18: INFO: hello world!
