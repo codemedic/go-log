@@ -5,7 +5,7 @@
 
 GoLog adds level based logging to logger(s) from standard library.
 
-GoLog's API is designed be expressive for configuration, with sensible defaults and to be easy to use.
+GoLog's API is designed to be expressive with sensible configuration defaults and to be easy to use.
 
 ## Installation
 
