@@ -1,7 +1,5 @@
 package log
 
-import "errors"
-
 type Level int
 
 const (
@@ -29,17 +27,17 @@ func (l Level) String() string {
 	}
 }
 
-func (l Level) IsEnabled(min Level) bool {
-	if min == Disabled {
+// IsEnabled return true if l is above or at the same level as threshold.
+// If threshold is Disabled or is below l then returns false.
+func (l Level) IsEnabled(threshold Level) bool {
+	if threshold == Disabled {
 		return false
 	}
 
-	return l >= min
+	return l >= threshold
 }
 
-var ErrBadLevel = errors.New("bad level")
-
-func LevelFromString(str string) (Level, error) {
+func levelFromString(str string) (Level, error) {
 	switch str {
 	case "error", "ERROR", "Error":
 		return Error, nil

@@ -6,13 +6,12 @@ import (
 )
 
 func main() {
-	l := log.Must(log.NewSyslog(
+	l := log.Must(log.NewLogfile("/tmp/test-logfile.log", 0644,
 		log.OptionMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
+			log.WithUTCTimestampFromEnv("LOG_UTC", true),
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
-			log.WithSyslogTag("test-syslog"),
-			// the default as provided by the standard library; this is just for demonstration
-			log.WithSyslogDaemonURL("unixgram:///dev/log"),
+			log.WithMicrosecondsTimestamp,
 		))))
 	defer l.Close()
 

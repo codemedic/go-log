@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"io/ioutil"
 	stdlog "log"
 	"log/syslog"
 )
@@ -22,8 +23,7 @@ type syslogLogger struct {
 
 func (s *syslogLogger) Close() {
 	s.level = Disabled
-	for i, closer := range s.closers {
-		s.loggers[i] = nil
+	for _, closer := range s.closers {
 		closer()
 	}
 }
@@ -45,23 +45,25 @@ func (s *syslogLogger) Logf(level Level, format string, value ...interface{}) {
 }
 
 var syslogDefaultOptions, _ = Options(
+	commonOptions,
 	WithUTCTimestamp(false),
 	WithMicrosecondsTimestamp(false),
-	WithSourceLocation(true),
-	WithLevel(Debug),
 )
 
-func NewSyslog(opt ...Option) (_ Log, err error) {
+// NewSyslog creates a new syslog logger with the specified options.
+func NewSyslog(opt ...Option) (log Log, err error) {
 	l := &syslogLogger{}
 
 	// apply default options first
 	if err = syslogDefaultOptions.applySyslog(l); err != nil {
+		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
 		if err = o.applySyslog(l); err != nil {
+			err = newConfigError(err)
 			return
 		}
 	}
@@ -74,11 +76,17 @@ func NewSyslog(opt ...Option) (_ Log, err error) {
 		var w *syslog.Writer
 		w, err = syslog.Dial(l.network, l.addr, toSyslogPriority(i), l.tag)
 		if err != nil {
+			err = newConnectionError(err)
 			return
 		}
 
-		l.loggers = append(l.loggers, stdlog.New(w, "", int(l.flags)))
-		l.closers = append(l.closers, func() { _ = w.Close() })
+		logger := stdlog.New(w, "", int(l.flags))
+		l.loggers = append(l.loggers, logger)
+		l.closers = append(l.closers, func() {
+			// stop using the writer before closing it
+			logger.SetOutput(ioutil.Discard)
+			_ = w.Close()
+		})
 	}
 
 	return Log{logger: l}, nil

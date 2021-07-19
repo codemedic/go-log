@@ -5,9 +5,9 @@ import (
 	"regexp"
 )
 
-type WithSyslogDaemonURL string
+type withSyslogDaemonURL string
 
-func (w WithSyslogDaemonURL) applySyslog(l *syslogLogger) error {
+func (w withSyslogDaemonURL) applySyslog(l *syslogLogger) error {
 	if w == "" {
 		l.network, l.addr = "", ""
 		return nil
@@ -18,14 +18,24 @@ func (w WithSyslogDaemonURL) applySyslog(l *syslogLogger) error {
 		return ErrBadSyslogDaemonURL
 	}
 
-	l.network, l.addr = matches[0], matches[1]
+	l.network, l.addr = matches[1], matches[2]
 	return nil
 }
 
-func (w WithSyslogDaemonURL) applyStdLog(*stdLevelLogger) error {
+func (w withSyslogDaemonURL) applyStdLog(*stdLogger) error {
 	return ErrIncompatibleOption
 }
 
+// WithSyslogDaemonURL specifies the syslog daemon URL for syslog logger.
+//
+// Example:
+//   l, err := log.NewSyslog(WithSyslogDaemonURL("udp://syslog.acme.com:514"))
+func WithSyslogDaemonURL(url string) Option {
+	return withSyslogDaemonURL(url)
+}
+
+// WithSyslogDaemonURLFromEnv makes a WithSyslogDaemonURL option based on the specified environment variable env or
+// defaultUrl if no environment variable was found.
 func WithSyslogDaemonURLFromEnv(env, defaultUrl string) OptionLoader {
 	return func() (Option, error) {
 		url := defaultUrl
@@ -37,10 +47,10 @@ func WithSyslogDaemonURLFromEnv(env, defaultUrl string) OptionLoader {
 			url = value
 		}
 
-		return WithSyslogDaemonURL(url), nil
+		return withSyslogDaemonURL(url), nil
 	}
 }
 
-var syslogDaemonURLRegex = regexp.MustCompile(`^(tcp[46]?|udp[46]?|unix(?:gram|packet)?)://([^:]+:\d)$`)
+var syslogDaemonURLRegex = regexp.MustCompile(`^(tcp[46]?|udp[46]?|unix(?:gram|packet)?)://([^:]+(?::\d)?)$`)
 
-var _ Option = WithSyslogDaemonURL("")
+var _ Option = withSyslogDaemonURL("")

@@ -84,10 +84,10 @@ func (l Log) Error(message string) {
 // disabled.
 //
 // Example:
-//     if logger.DebugEnabled() {
-//         debugData := makeDebugData()
-//         logger.Debugf("debug data: %v", debugData)
-//     }
+//   if logger.DebugEnabled() {
+//     debugData := makeDebugData()
+//     logger.Debugf("debug data: %v", debugData)
+//   }
 func (l Log) DebugEnabled() bool {
 	if l.logger == nil {
 		return false
@@ -96,15 +96,18 @@ func (l Log) DebugEnabled() bool {
 	return Debug.IsEnabled(l.logger.Level())
 }
 
+// Close disables and closed the logger, freeing up any resources allocated to the logger.
+// Once closed, the logger will remain safe to use (free from panics) but disabled.
 func (l Log) Close() {
 	if l.logger != nil {
 		l.logger.Close()
 	}
 }
 
+// Must ensures that a Log instance was initialised without error. If there is an error it panics.
 func Must(l Log, err error) Log {
 	if err != nil {
-		panic(fmt.Errorf("failed to initialise logger; error:%w", err))
+		panic(fmt.Errorf("failed to initialise logger; %w", err))
 	}
 
 	return l

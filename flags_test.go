@@ -52,6 +52,15 @@ func Test_flags_enable(t *testing.T) {
 			},
 			after: stdlog.LUTC | stdlog.LstdFlags,
 		},
+		{
+			name:  "enable multiple flags",
+			flags: stdlog.LstdFlags,
+			args: args{
+				flag:   stdlog.LUTC | stdlog.Lmicroseconds,
+				enable: true,
+			},
+			after: stdlog.LUTC | stdlog.Lmicroseconds | stdlog.LstdFlags,
+		},
 	}
 
 	for _, tt := range tests {

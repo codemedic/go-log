@@ -1,66 +1,94 @@
 package log
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	stdlog "log"
 	"os"
 )
 
-var DefaultLocationFormat = stdlog.Lshortfile
-
-var stdLogDefaultOptions, _ = Options(
-	WithUTCTimestamp(true),
-	WithMicrosecondsTimestamp(true),
-	WithSourceLocation(true),
+var commonOptions, _ = Options(
+	WithUTCTimestamp,
+	WithMicrosecondsTimestamp,
+	WithSourceLocationShort,
 	WithLevel(Debug),
-	WithWriter(os.Stderr),
 )
 
 type stdLogOption interface {
-	applyStdLog(*stdLevelLogger) error
+	applyStdLog(*stdLogger) error
 }
 
-type stdLevelLogger struct {
-	level     Level
-	flags     flags
-	writer    io.WriteCloser
-	stdLogger *stdlog.Logger
+type stdLogger struct {
+	level  Level
+	flags  flags
+	writer io.WriteCloser
+	logger *stdlog.Logger
 }
 
-func (l *stdLevelLogger) Close() {
+// Close disables and closed the logger, freeing up resources.
+func (l *stdLogger) Close() {
 	l.level = Disabled
+	// stop using the writer before closing it
+	l.logger.SetOutput(ioutil.Discard)
 	_ = l.writer.Close()
 }
 
-func (l *stdLevelLogger) Level() Level {
+func (l *stdLogger) Level() Level {
 	return l.level
 }
 
-func (l *stdLevelLogger) Logf(level Level, format string, value ...interface{}) {
+func (l *stdLogger) Logf(level Level, format string, value ...interface{}) {
 	if level.IsEnabled(l.level) {
-		_ = l.stdLogger.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
+		_ = l.logger.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
 	}
 }
 
-func NewStdLog(opt ...Option) (_ Log, err error) {
-	l := &stdLevelLogger{
+// New creates a new logger with the specified options.
+func New(opt ...Option) (log Log, err error) {
+	l := &stdLogger{
 		flags: stdlog.LstdFlags,
 	}
 
 	// apply default options first
-	if err = stdLogDefaultOptions.applyStdLog(l); err != nil {
+	if err = commonOptions.applyStdLog(l); err != nil {
+		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
 		if err = o.applyStdLog(l); err != nil {
+			err = newConfigError(err)
 			return
 		}
 	}
 
-	l.stdLogger = stdlog.New(l.writer, "", int(l.flags))
+	if l.writer == nil {
+		err = newConfigError(errors.New("no writer given"))
+		return
+	}
+
+	l.logger = stdlog.New(l.writer, "", int(l.flags))
 
 	return Log{logger: l}, nil
+}
+
+func NewStderr(opt ...Option) (Log, error) {
+	return New(options(opt).appendCopy(WithWriter(os.Stderr)))
+}
+
+func NewStdout(opt ...Option) (Log, error) {
+	return New(options(opt).appendCopy(WithWriter(os.Stdout)))
+}
+
+func NewLogfile(file string, perm os.FileMode, opt ...Option) (log Log, err error) {
+	var f io.WriteCloser
+	if f, err = os.OpenFile(file, os.O_WRONLY|os.O_APPEND|os.O_CREATE, perm); err != nil {
+		err = fmt.Errorf("failed to open log file; error:%w", err)
+		return
+	}
+
+	return New(options(opt).appendCopy(WithWriter(f)))
 }

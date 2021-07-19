@@ -1,14 +1,22 @@
 package log
 
-type WithSyslogTag string
+type withSyslogTag string
 
-func (w WithSyslogTag) applyStdLog(*stdLevelLogger) error {
+func (w withSyslogTag) applyStdLog(*stdLogger) error {
 	return ErrIncompatibleOption
 }
 
-func (w WithSyslogTag) applySyslog(l *syslogLogger) error {
+func (w withSyslogTag) applySyslog(l *syslogLogger) error {
 	l.tag = string(w)
 	return nil
 }
 
-var _ Option = WithSyslogTag("")
+// WithSyslogTag specifies the tag for syslog logger.
+//
+// Example:
+//   l, err := log.NewSyslog(WithSyslogTag("app-name"))
+func WithSyslogTag(tag string) Option {
+	return withSyslogTag(tag)
+}
+
+var _ Option = withSyslogTag("")

@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	l := log.Must(log.NewStdLog(
-		log.OptionsMust(log.Options(
+	l := log.Must(log.NewStderr(
+		log.OptionMust(log.Options(
 			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
 			log.WithUTCTimestampFromEnv("LOG_UTC", true),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", true),
-			log.WithMicrosecondsTimestamp(true),
+			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			log.WithMicrosecondsTimestamp,
 		))))
 	defer l.Close()
 

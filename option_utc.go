@@ -2,18 +2,28 @@ package log
 
 import "log"
 
-type WithUTCTimestamp bool
+type withUTCTimestamp bool
 
-func (w WithUTCTimestamp) applySyslog(l *syslogLogger) error {
+func (w withUTCTimestamp) applySyslog(l *syslogLogger) error {
 	l.flags.enable(log.LUTC, bool(w))
 	return nil
 }
 
-func (w WithUTCTimestamp) applyStdLog(l *stdLevelLogger) error {
+func (w withUTCTimestamp) applyStdLog(l *stdLogger) error {
 	l.flags.enable(log.LUTC, bool(w))
 	return nil
 }
 
+// WithUTCTimestamp specifies whether loggers are to log timestamp in UTC.
+//
+// Example:
+//   l, err := log.NewStderr(WithUTCTimestamp(true))
+func WithUTCTimestamp(enable bool) Option {
+	return withUTCTimestamp(enable)
+}
+
+// WithUTCTimestampFromEnv makes a WithUTCTimestamp option based on the specified environment variable env or
+// defaultEnable if no environment variable was found.
 func WithUTCTimestampFromEnv(env string, defaultEnable bool) OptionLoader {
 	return func() (Option, error) {
 		enable, err := boolFromEnv(env, defaultEnable)
@@ -21,8 +31,8 @@ func WithUTCTimestampFromEnv(env string, defaultEnable bool) OptionLoader {
 			return nil, err
 		}
 
-		return WithUTCTimestamp(enable), nil
+		return withUTCTimestamp(enable), nil
 	}
 }
 
-var _ Option = WithUTCTimestamp(false)
+var _ Option = withUTCTimestamp(false)
