@@ -43,7 +43,8 @@ func main() {
 
 ### Leveled Logging
 
-The methods below provides leveled logging with GoLog. See [examples](doc_test.go) for more.
+The methods below provides leveled logging. They follow the same pattern as `fmt.Print` and `fmt.Printf` and uses the
+same format specification.
 
 ```go
 // Log string message at specific levels
