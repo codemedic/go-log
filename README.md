@@ -1,7 +1,7 @@
 # Go Log
 
-[![godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/codemedic/go-log)
-[![license](https://img.shields.io/github/license/codemedic/go-log?style=flat-square)](https://raw.githubusercontent.com/codemedic/go-log/master/LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/codemedic/go-log.svg)](https://pkg.go.dev/github.com/codemedic/go-log)
+[![license](https://img.shields.io/github/license/codemedic/go-log?style=flat)](https://raw.githubusercontent.com/codemedic/go-log/master/LICENSE)
 
 GoLog adds level based logging to logger(s) from standard library.
 
