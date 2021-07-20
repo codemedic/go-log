@@ -1,20 +1,20 @@
 package main
 
 import (
-	stdlog "log"
+	"log"
 	"sync"
 
-	"github.com/codemedic/go-log"
+	golog "github.com/codemedic/go-log"
 )
 
 func main() {
-	l := log.Must(log.NewSyslog(
-		log.OptionsMust(log.Options(
-			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
-			log.WithSyslogTag("test-syslog"),
+	l := golog.Must(golog.NewSyslog(
+		golog.OptionsMust(golog.Options(
+			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
+			golog.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			golog.WithSyslogTag("test-syslog"),
 			// the default as provided by the standard library; this is just for demonstration
-			log.WithSyslogDaemonURL("unixgram:///dev/log"),
+			golog.WithSyslogDaemonURL("unixgram:///dev/log"),
 		))))
 	defer l.Close()
 
@@ -32,5 +32,5 @@ func main() {
 
 	wg.Wait()
 
-	stdlog.Print("done")
+	log.Print("done")
 }

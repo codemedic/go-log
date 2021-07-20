@@ -2,26 +2,26 @@ package main
 
 import (
 	"bytes"
-	stdlog "log"
+	"log"
 	"sync"
 
-	"github.com/codemedic/go-log"
+	golog "github.com/codemedic/go-log"
 )
 
 func main() {
-	l := log.Must(log.NewStderr(
-		log.OptionsMust(log.Options(
-			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-			log.WithUTCTimestampFromEnv("LOG_UTC", true),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
-			log.WithPrintLevel(log.Info),
-			log.WithMicrosecondsTimestamp,
-			log.WithStdlogSorter(func(b []byte) log.Level {
+	l := golog.Must(golog.NewStderr(
+		golog.OptionsMust(golog.Options(
+			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
+			golog.WithUTCTimestampFromEnv("LOG_UTC", true),
+			golog.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			golog.WithPrintLevel(golog.Info),
+			golog.WithMicrosecondsTimestamp,
+			golog.WithStdlogSorter(func(b []byte) golog.Level {
 				if bytes.HasPrefix(b, []byte("DEBUG")) {
-					return log.Disabled
+					return golog.Disabled
 				}
 
-				return log.Info
+				return golog.Info
 			}),
 		))))
 	defer l.Close()
@@ -40,6 +40,6 @@ func main() {
 
 	wg.Wait()
 
-	stdlog.Print("DEBUG: hide me")
-	stdlog.Print("done")
+	log.Print("DEBUG: hide me")
+	log.Print("done")
 }

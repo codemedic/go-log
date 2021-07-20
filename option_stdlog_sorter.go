@@ -9,12 +9,18 @@ func defaultLogSorter(_ []byte) Level {
 type withStdlogSorter logSorter
 
 func (w withStdlogSorter) applyStdLog(l *stdLogger) error {
-	l.stdSorter = logSorter(w)
+	if w != nil {
+		l.stdSorter = logSorter(w)
+	}
+
 	return nil
 }
 
 func (w withStdlogSorter) applySyslog(l *syslogLogger) error {
-	l.stdSorter = logSorter(w)
+	if w != nil {
+		l.stdSorter = logSorter(w)
+	}
+
 	return nil
 }
 

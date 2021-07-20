@@ -1,19 +1,19 @@
 package main
 
 import (
-	stdlog "log"
+	"log"
 	"sync"
 
-	"github.com/codemedic/go-log"
+	golog "github.com/codemedic/go-log"
 )
 
 func main() {
-	l := log.Must(log.NewLogfile("/tmp/test-logfile.log", 0644,
-		log.OptionsMust(log.Options(
-			log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-			log.WithUTCTimestampFromEnv("LOG_UTC", true),
-			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
-			log.WithMicrosecondsTimestamp,
+	l := golog.Must(golog.NewLogfile("/tmp/test-logfile.log", 0644,
+		golog.OptionsMust(golog.Options(
+			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
+			golog.WithUTCTimestampFromEnv("LOG_UTC", true),
+			golog.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
+			golog.WithMicrosecondsTimestamp,
 		))))
 	defer l.Close()
 
@@ -31,5 +31,5 @@ func main() {
 
 	wg.Wait()
 
-	stdlog.Print("done")
+	log.Print("done")
 }
