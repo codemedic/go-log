@@ -21,11 +21,11 @@ logger is closed, once you are done with it, using `defer l.Close()`. Now you ar
 ```go
 package main
 
-import "github.com/codemedic/go-log"
+import golog "github.com/codemedic/go-log"
 
 func main() {
   // create syslog logger
-  l := log.Must(log.NewSyslog())
+  l := golog.Must(golog.NewSyslog())
   
   // make sure resources are freed up when we are done
   defer l.Close()
@@ -67,11 +67,11 @@ package main
 
 import (
   "errors"
-  "github.com/codemedic/go-log"
+  golog "github.com/codemedic/go-log"
 )
 
 func main() {
-  l := log.Must(log.NewSyslog())
+  l := golog.Must(golog.NewSyslog())
   defer l.Close()
 
   l.Debug("debug message")
@@ -97,14 +97,14 @@ See [documentation](https://pkg.go.dev/github.com/codemedic/go-log#Option) for a
 ```go
 package main
 
-import "github.com/codemedic/go-log"
+import golog "github.com/codemedic/go-log"
 
 func main() {
-  l := log.Must(log.NewSyslog(
-    log.OptionsMust(log.Options(
-      log.WithLevelFromEnv("LOG_THRESHOLD", log.Info),
-      log.WithSourceLocationFromEnv("LOG_CALLER_LOCATION", "short"),
-      log.WithSyslogTag("my-test-app"),
+  l := golog.Must(golog.NewSyslog(
+    golog.OptionsMust(golog.Options(
+      golog.WithLevelFromEnv("LOG_THRESHOLD", golog.Info),
+      golog.WithSourceLocationFromEnv("LOG_CALLER_LOCATION", "short"),
+      golog.WithSyslogTag("my-test-app"),
     ))))
   defer l.Close()
 
@@ -124,27 +124,27 @@ behaviour can be customised using [`WithStdlogSorter`](https://pkg.go.dev/github
 package main
 
 import (
-	"bytes"
-	"github.com/codemedic/go-log"
+  "bytes"
+  golog "github.com/codemedic/go-log"
 )
 
-func sortStdlog(b []byte) log.Level {
-	switch {
-	case bytes.HasPrefix(b, []byte("WARNING")):
-		fallthrough
-	case bytes.HasPrefix(b, []byte("ERROR")):
-		return log.Warning
-	case bytes.HasPrefix(b, []byte("DEBUG")):
-		return log.Disabled
-	default:
-		return log.Info
-	}
+func sortStdlog(b []byte) golog.Level {
+  switch {
+  case bytes.HasPrefix(b, []byte("WARNING")):
+    fallthrough
+  case bytes.HasPrefix(b, []byte("ERROR")):
+    return golog.Warning
+  case bytes.HasPrefix(b, []byte("DEBUG")):
+    return golog.Disabled
+  default:
+    return golog.Info
+  }
 }
 
 func main() {
-	l, _ := log.NewSyslog(log.WithStdlogSorter(sortStdlog))
-	defer l.Close()
+  l, _ := golog.NewSyslog(golog.WithStdlogSorter(sortStdlog))
+  defer l.Close()
 
-	l.Info("hello world!")
+  l.Info("hello world!")
 }
 ```
