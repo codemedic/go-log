@@ -15,10 +15,16 @@ var commonOptions, _ = Options(
 	WithSourceLocationShort,
 	WithLevel(Debug),
 	WithPrintLevel(Debug),
+	WithStdlogHandler,
+	WithStdlogSorter(defaultLogSorter),
 )
 
 type stdLogOption interface {
 	applyStdLog(*stdLogger) error
+}
+
+func formatMessage(level Level, format string, value ...interface{}) string {
+	return fmt.Sprintf(level.String()+": "+format, value...)
 }
 
 type stdLogger struct {
@@ -27,6 +33,17 @@ type stdLogger struct {
 	printLevel Level
 	writer     io.WriteCloser
 	logger     *stdlog.Logger
+	stdSorter  logSorter
+}
+
+// Write satisfies io.Writer interface so that stdLogger can be used as writer for the standard global logger.
+func (l *stdLogger) Write(p []byte) (_ int, err error) {
+	level := l.stdSorter(p)
+	if level.IsEnabled(l.level) {
+		err = l.logger.Output(4, formatMessage(level, "%s", string(p)))
+	}
+
+	return
 }
 
 func (l *stdLogger) PrintLevel() Level {
@@ -47,7 +64,7 @@ func (l *stdLogger) Level() Level {
 
 func (l *stdLogger) Logf(level Level, format string, value ...interface{}) {
 	if level.IsEnabled(l.level) {
-		_ = l.logger.Output(3, fmt.Sprintf(level.String()+": "+format, value...))
+		_ = l.logger.Output(3, formatMessage(level, format, value...))
 	}
 }
 

@@ -42,25 +42,16 @@ func (w withSourceLocation) applyStdLog(l *stdLogger) error {
 }
 
 // WithSourceLocationDisabled disables caller-location in log-lines.
-//
-// Example:
-//   l, err := log.NewSyslog(log.WithSourceLocationDisabled())
 func WithSourceLocationDisabled() Option {
 	return withSourceLocation(0)
 }
 
 // WithSourceLocationShort specifies the caller-location in log-lines to have short filename.
-//
-// Example:
-//   l, err := log.NewSyslog(log.WithSourceLocationShort())
 func WithSourceLocationShort() Option {
 	return withSourceLocation(stdlog.Lshortfile)
 }
 
 // WithSourceLocationLong specifies the caller-location in log-lines to have long filename.
-//
-// Example:
-//   l, err := log.NewSyslog(log.WithSourceLocationLong())
 func WithSourceLocationLong() Option {
 	return withSourceLocation(stdlog.Llongfile)
 }

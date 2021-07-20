@@ -25,9 +25,6 @@ type nopCloser struct {
 func (nopCloser) Close() error { return nil }
 
 // WithWriter specifies the writer for a logger.
-//
-// Example:
-//   l, err := log.New(WithWriter(os.Stdout))
 func WithWriter(w io.WriteCloser) Option {
 	// prevent the logger from closing stderr or stdout
 	if w == os.Stderr || w == os.Stdout {

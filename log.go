@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
-// LevelLogger interface provides means to extend this library
-type LevelLogger interface {
+// Logger interface provides means to extend this library
+type Logger interface {
 	// Level gives the current threshold of the logger
 	Level() Level
 	// PrintLevel gives the level at which log.Print logs
@@ -18,7 +18,7 @@ type LevelLogger interface {
 }
 
 type Log struct {
-	logger LevelLogger
+	logger Logger
 }
 
 func (l Log) Debugf(format string, value ...interface{}) {

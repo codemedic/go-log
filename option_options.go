@@ -59,14 +59,6 @@ func Options(opt ...interface{}) (Option, error) {
 
 // OptionsMust checks for errors from dynamic OptionLoader combined through Options.
 // It panics if err is not nil otherwise returns o.
-//
-// Example:
-//   l, err := log.NewSyslog(
-//     log.OptionsMust( // panic on errors from decoding environment variable LOG_LEVEL
-//       log.Options(
-//         log.WithLevelFromEnv("LOG_LEVEL", log.Info),
-//         log.WithMicrosecondsTimestamp,
-//   )))
 func OptionsMust(o Option, err error) Option {
 	if err != nil {
 		panic(fmt.Errorf("failed to load options; error:%w", err))

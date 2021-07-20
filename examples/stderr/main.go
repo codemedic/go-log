@@ -1,8 +1,11 @@
 package main
 
 import (
-	"github.com/codemedic/go-log"
+	"bytes"
+	stdlog "log"
 	"sync"
+
+	"github.com/codemedic/go-log"
 )
 
 func main() {
@@ -13,6 +16,13 @@ func main() {
 			log.WithSourceLocationFromEnv("LOG_SOURCE_LOCATION", "short"),
 			log.WithPrintLevel(log.Info),
 			log.WithMicrosecondsTimestamp,
+			log.WithStdlogSorter(func(b []byte) log.Level {
+				if bytes.HasPrefix(b, []byte("DEBUG")) {
+					return log.Disabled
+				}
+
+				return log.Info
+			}),
 		))))
 	defer l.Close()
 
@@ -30,5 +40,6 @@ func main() {
 
 	wg.Wait()
 
-	l.Print("done")
+	stdlog.Print("DEBUG: hide me")
+	stdlog.Print("done")
 }

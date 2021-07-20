@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/codemedic/go-log"
+	stdlog "log"
 	"sync"
+
+	"github.com/codemedic/go-log"
 )
 
 func main() {
@@ -29,4 +31,6 @@ func main() {
 	}
 
 	wg.Wait()
+
+	stdlog.Print("done")
 }

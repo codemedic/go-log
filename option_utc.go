@@ -15,9 +15,6 @@ func (w withUTCTimestamp) applyStdLog(l *stdLogger) error {
 }
 
 // WithUTCTimestamp specifies whether loggers are to log timestamp in UTC.
-//
-// Example:
-//   l, err := log.NewStderr(WithUTCTimestamp(true))
 func WithUTCTimestamp(enable bool) Option {
 	return withUTCTimestamp(enable)
 }

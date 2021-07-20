@@ -15,9 +15,6 @@ func (w withLevel) applyStdLog(l *stdLogger) error {
 }
 
 // WithLevel specifies the level for loggers.
-//
-// Example:
-//   l, err := log.NewSyslog(WithLevel(Info))
 func WithLevel(level Level) Option {
 	return withLevel(level)
 }
@@ -52,9 +49,6 @@ func (w withPrintLevel) applyStdLog(l *stdLogger) error {
 }
 
 // WithPrintLevel specifies the level for log.Print and log.Printf.
-//
-// Example:
-//   l, err := log.NewSyslog(WithPrintLevel(Info))
 func WithPrintLevel(level Level) Option {
 	return withPrintLevel(level)
 }

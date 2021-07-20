@@ -12,9 +12,6 @@ func (w withSyslogTag) applySyslog(l *syslogLogger) error {
 }
 
 // WithSyslogTag specifies the tag for syslog logger.
-//
-// Example:
-//   l, err := log.NewSyslog(WithSyslogTag("app-name"))
 func WithSyslogTag(tag string) Option {
 	return withSyslogTag(tag)
 }

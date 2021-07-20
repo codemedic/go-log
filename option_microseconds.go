@@ -15,9 +15,6 @@ func (w withMicrosecondsTimestamp) applyStdLog(l *stdLogger) error {
 }
 
 // WithMicrosecondsTimestamp specifies whether loggers are to log timestamp with microseconds precision.
-//
-// Example:
-//   l, err := log.NewStderr(WithMicrosecondsTimestamp(true))
 func WithMicrosecondsTimestamp(enable bool) Option {
 	return withMicrosecondsTimestamp(enable)
 }

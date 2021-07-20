@@ -27,11 +27,6 @@ func (w withSyslogDaemonURL) applyStdLog(*stdLogger) error {
 }
 
 // WithSyslogDaemonURL specifies the syslog daemon URL for syslog logger.
-//
-// Example:
-//   l, err := log.NewSyslog(WithSyslogDaemonURL("udp://syslog.acme.com:514"))
-// Or
-//   l, err := log.NewSyslog(log.WithSyslogDaemonURL("unixgram:///dev/log"))
 func WithSyslogDaemonURL(url string) Option {
 	return withSyslogDaemonURL(url)
 }

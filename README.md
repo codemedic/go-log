@@ -13,9 +13,10 @@ GoLog's API is designed to be expressive with sensible configuration defaults an
 
 ## Getting Started
 
-### Logging Example
+To get started, import the library and use one of the constructor functions, wrapped with `log.Must`. Make sure the
+logger is closed, once you are done with it, using `defer l.Close()`. Now you are all set to start logging.
 
-To get started, import the library and use one of the constructor functions, wrapped with `log.Must`.
+#### Example
 
 ```go
 package main
@@ -32,16 +33,15 @@ func main() {
   // hello to the world
   l.Print("hello world!")
 }
-
-// Output: 2021/07/19 07:57:57.936834 main.go:18: INFO: hello world!
 ```
 
-> **NOTE**
-> 
+> **NOTE**<br/>
 > Functions `log.Print` and `log.Printf` logs to `Debug` level by default. It is preferable to use a method that log to
-> a specific level. The level logged to by `log.Print` and `log.Printf` can be changed using `WithPrintLevel`.
+> a specific level. The level logged to by `log.Print` and `log.Printf` can be changed using [`WithPrintLevel`](https://pkg.go.dev/github.com/codemedic/go-log#WithPrintLevel).
 
-### Leveled Logging
+You can find more [examples here](https://pkg.go.dev/github.com/codemedic/go-log#pkg-examples).
+
+## Leveled Logging
 
 The methods below provides leveled logging. They follow the same pattern as `fmt.Print` and `fmt.Printf` and uses the
 same format specification.
@@ -60,6 +60,91 @@ Warningf(format string, value ...interface{})
 Errorf(format string, value ...interface{})
 ```
 
-### Options aka Settings
+#### Example
+
+```go
+package main
+
+import (
+  "errors"
+  "github.com/codemedic/go-log"
+)
+
+func main() {
+  l := log.Must(log.NewSyslog())
+  defer l.Close()
+
+  l.Debug("debug message")
+  l.Debugf("formatted %s message", "debug")
+
+  l.Info("informational message")
+  l.Infof("formatted %s message", "informational")
+
+  l.Warning("warning message")
+  l.Warningf("formatted %s message", "warning")
+
+  l.Error("error message")
+  l.Errorf("formatted %v message", errors.New("error"))
+}
+```
+
+## Options / Settings
 
 See [documentation](https://pkg.go.dev/github.com/codemedic/go-log#Option) for all available `Options`.
+
+#### Example
+
+```go
+package main
+
+import "github.com/codemedic/go-log"
+
+func main() {
+  l := log.Must(log.NewSyslog(
+    log.OptionsMust(log.Options(
+      log.WithLevelFromEnv("LOG_THRESHOLD", log.Info),
+      log.WithSourceLocationFromEnv("LOG_CALLER_LOCATION", "short"),
+      log.WithSyslogTag("my-test-app"),
+    ))))
+  defer l.Close()
+
+  l.Info("hello world!")
+}
+```
+
+## Standard log handler
+
+Logging via standard logger is handled by default. This is meant for cases where the logging via the standard library is
+outside your control; a library used in your project for example. Those will be logged at `Info` level, but this
+behaviour can be customised using [`WithStdlogSorter`](https://pkg.go.dev/github.com/codemedic/go-log#WithStdlogSorter).
+
+#### Example
+
+```go
+package main
+
+import (
+	"bytes"
+	"github.com/codemedic/go-log"
+)
+
+func sortStdlog(b []byte) log.Level {
+	switch {
+	case bytes.HasPrefix(b, []byte("WARNING")):
+		fallthrough
+	case bytes.HasPrefix(b, []byte("ERROR")):
+		return log.Warning
+	case bytes.HasPrefix(b, []byte("DEBUG")):
+		return log.Disabled
+	default:
+		return log.Info
+	}
+}
+
+func main() {
+	l, _ := log.NewSyslog(log.WithStdlogSorter(sortStdlog))
+	defer l.Close()
+
+	l.Info("hello world!")
+}
+```

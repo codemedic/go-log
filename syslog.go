@@ -20,6 +20,20 @@ type syslogLogger struct {
 	network    string
 	loggers    []*stdlog.Logger
 	closers    []func()
+	stdHandler bool
+	stdSorter  logSorter
+}
+
+// Write satisfies io.Writer interface so that syslogLogger can be used as writer for the standard global logger.
+func (s *syslogLogger) Write(p []byte) (n int, err error) {
+	level := s.stdSorter(p)
+	logger := s.getLoggerByLevel(level)
+	if logger == nil {
+		return
+	}
+
+	err = logger.Output(4, string(p))
+	return
 }
 
 func (s *syslogLogger) PrintLevel() Level {
@@ -37,16 +51,25 @@ func (s *syslogLogger) Level() Level {
 	return s.level
 }
 
-func (s *syslogLogger) Logf(level Level, format string, value ...interface{}) {
+func (s *syslogLogger) getLoggerByLevel(level Level) *stdlog.Logger {
 	if !level.IsEnabled(s.level) {
-		return
+		return nil
 	}
 
 	if level > Error {
 		level = Error
 	}
 
-	_ = s.loggers[level-s.level].Output(3, fmt.Sprintf(format, value...))
+	return s.loggers[level-s.level]
+}
+
+func (s *syslogLogger) Logf(level Level, format string, value ...interface{}) {
+	logger := s.getLoggerByLevel(level)
+	if logger == nil {
+		return
+	}
+
+	_ = logger.Output(3, fmt.Sprintf(format, value...))
 }
 
 var syslogDefaultOptions, _ = Options(
