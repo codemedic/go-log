@@ -10,8 +10,6 @@ import (
 )
 
 func ExampleNewStderr() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewStderr(
 		golog.OptionsMust(golog.Options(
 			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
@@ -24,8 +22,6 @@ func ExampleNewStderr() {
 }
 
 func ExampleNewStdout() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewStdout(
 		golog.OptionsMust(golog.Options(
 			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
@@ -38,8 +34,6 @@ func ExampleNewStdout() {
 }
 
 func ExampleNewLogfile() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewLogfile("/tmp/test-logfile.log", 0644,
 		golog.OptionsMust(golog.Options(
 			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
@@ -52,8 +46,6 @@ func ExampleNewLogfile() {
 }
 
 func ExampleNewSyslog() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewSyslog(
 		golog.OptionsMust(golog.Options(
 			// set the log-level dynamically from the environment
@@ -68,9 +60,7 @@ func ExampleNewSyslog() {
 }
 
 func ExampleWithLevel() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithLevel(golog.Info),
 	))
 
@@ -81,9 +71,7 @@ func ExampleWithLevel() {
 }
 
 func ExampleWithPrintLevel() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithPrintLevel(golog.Info),
 	))
 
@@ -93,9 +81,7 @@ func ExampleWithPrintLevel() {
 }
 
 func ExampleWithSourceLocationDisabled() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithSourceLocationDisabled(),
 	))
 
@@ -103,9 +89,7 @@ func ExampleWithSourceLocationDisabled() {
 }
 
 func ExampleWithSourceLocationLong() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithSourceLocationLong(),
 	))
 
@@ -113,9 +97,7 @@ func ExampleWithSourceLocationLong() {
 }
 
 func ExampleWithSourceLocationShort() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithSourceLocationShort(),
 	))
 
@@ -123,9 +105,7 @@ func ExampleWithSourceLocationShort() {
 }
 
 func ExampleWithSourceLocationFromEnv() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(golog.OptionsMust(golog.Options(
+	l := golog.Must(golog.NewStdout(golog.OptionsMust(golog.Options(
 		golog.WithSourceLocationFromEnv("LOG_CALLER_LOCATION", "short"),
 	))))
 
@@ -133,9 +113,7 @@ func ExampleWithSourceLocationFromEnv() {
 }
 
 func ExampleWithMicrosecondsTimestamp() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithMicrosecondsTimestamp(true),
 	))
 
@@ -143,9 +121,7 @@ func ExampleWithMicrosecondsTimestamp() {
 }
 
 func ExampleWithMicrosecondsTimestampFromEnv() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(golog.OptionsMust(golog.Options(
+	l := golog.Must(golog.NewStdout(golog.OptionsMust(golog.Options(
 		golog.WithMicrosecondsTimestampFromEnv("LOG_MICROSECOND_TIMESTAMP", true),
 	))))
 
@@ -153,9 +129,7 @@ func ExampleWithMicrosecondsTimestampFromEnv() {
 }
 
 func ExampleOptions() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.OptionsMust(
 			golog.Options(
 				golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
@@ -165,9 +139,7 @@ func ExampleOptions() {
 }
 
 func ExampleOptionsMust() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.OptionsMust(
 			golog.Options(
 				golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
@@ -177,9 +149,7 @@ func ExampleOptionsMust() {
 }
 
 func ExampleWithStdlogHandler() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithStdlogHandler(false),
 	))
 
@@ -187,9 +157,7 @@ func ExampleWithStdlogHandler() {
 }
 
 func ExampleWithStdlogSorter() {
-	// import golog "github.com/codemedic/go-log"
-
-	l, _ := golog.NewSyslog(golog.WithStdlogSorter(func(b []byte) golog.Level {
+	l, _ := golog.NewStdout(golog.WithStdlogSorter(func(b []byte) golog.Level {
 		switch {
 		case bytes.HasPrefix(b, []byte("WARNING")):
 			fallthrough
@@ -208,8 +176,6 @@ func ExampleWithStdlogSorter() {
 }
 
 func ExampleWithSyslogTag() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewSyslog(
 		golog.WithSyslogTag("my-app-name"),
 	))
@@ -218,8 +184,6 @@ func ExampleWithSyslogTag() {
 }
 
 func ExampleWithSyslogDaemonURL_uDP() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewSyslog(
 		golog.WithSyslogDaemonURL("udp://syslog.acme.com:514"),
 	))
@@ -228,8 +192,6 @@ func ExampleWithSyslogDaemonURL_uDP() {
 }
 
 func ExampleWithSyslogDaemonURL_local() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewSyslog(
 		golog.WithSyslogDaemonURL("unixgram:///dev/log"),
 	))
@@ -238,8 +200,6 @@ func ExampleWithSyslogDaemonURL_local() {
 }
 
 func ExampleWithSyslogDaemonURLFromEnv() {
-	// import golog "github.com/codemedic/go-log"
-
 	l := golog.Must(golog.NewSyslog(golog.OptionsMust(golog.Options(
 		golog.WithSyslogDaemonURLFromEnv("LOG_SERVER", "udp://syslog.acme.com:514"),
 	))))
@@ -248,9 +208,7 @@ func ExampleWithSyslogDaemonURLFromEnv() {
 }
 
 func ExampleWithUTCTimestamp() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.NewStdout(
 		golog.WithUTCTimestamp(true),
 	))
 
@@ -258,9 +216,7 @@ func ExampleWithUTCTimestamp() {
 }
 
 func ExampleWithUTCTimestampFromEnv() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(golog.OptionsMust(golog.Options(
+	l := golog.Must(golog.NewStdout(golog.OptionsMust(golog.Options(
 		golog.WithUTCTimestampFromEnv("LOG_UTC", true),
 	))))
 
@@ -268,9 +224,7 @@ func ExampleWithUTCTimestampFromEnv() {
 }
 
 func ExampleWithWriter() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog(
+	l := golog.Must(golog.New(
 		golog.WithWriter(os.Stdout),
 	))
 
@@ -278,9 +232,7 @@ func ExampleWithWriter() {
 }
 
 func Example() {
-	// import golog "github.com/codemedic/go-log"
-
-	l := golog.Must(golog.NewSyslog())
+	l := golog.Must(golog.NewStdout())
 	defer l.Close()
 
 	l.Debug("debug message")
