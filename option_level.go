@@ -19,6 +19,18 @@ func WithLevel(level Level) Option {
 	return withLevel(level)
 }
 
+// WithLevelString specifies the level for loggers as a string.
+func WithLevelString(str string) OptionLoader {
+	return func() (Option, error) {
+		level, err := levelFromString(str)
+		if err != nil {
+			return nil, newConfigError(err)
+		}
+
+		return withLevel(level), nil
+	}
+}
+
 // WithLevelFromEnv makes a WithLevel option based on the specified environment variable env or defaultLevel if no
 // environment variable was found.
 func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {

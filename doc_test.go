@@ -3,6 +3,7 @@ package log_test
 import (
 	"bytes"
 	"errors"
+	"flag"
 	"math/rand"
 	"os"
 
@@ -70,6 +71,19 @@ func ExampleWithLevel() {
 	l.Info("hello world!")
 }
 
+func ExampleWithLevelString() {
+	lvl := flag.String("level", "debug", "Log level")
+
+	l := golog.Must(golog.NewSyslog(
+		golog.OptionsMust(golog.Options(
+			golog.WithSyslogTag("test-syslog"),
+			// set the log-level to what is specified on commandline
+			golog.WithLevelString(*lvl),
+		))))
+
+	defer l.Close()
+}
+
 func ExampleWithPrintLevel() {
 	l := golog.Must(golog.NewStdout(
 		golog.WithPrintLevel(golog.Info),
@@ -108,6 +122,19 @@ func ExampleWithSourceLocationFromEnv() {
 	l := golog.Must(golog.NewStdout(golog.OptionsMust(golog.Options(
 		golog.WithSourceLocationFromEnv("LOG_CALLER_LOCATION", "short"),
 	))))
+
+	defer l.Close()
+}
+
+func ExampleWithSourceLocation() {
+	srcloc := flag.String("srcloc", "disabled", "Source location in log lines")
+
+	l := golog.Must(golog.NewSyslog(
+		golog.OptionsMust(golog.Options(
+			golog.WithSyslogTag("test-syslog"),
+			// set the source-location option as specified on commandline
+			golog.WithSourceLocation(*srcloc),
+		))))
 
 	defer l.Close()
 }

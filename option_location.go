@@ -56,6 +56,18 @@ func WithSourceLocationLong() Option {
 	return withSourceLocation(stdlog.Llongfile)
 }
 
+// WithSourceLocation specifies the caller-location format as a string; allowed values are "short", "long", "disabled".
+func WithSourceLocation(value string) OptionLoader {
+	return func() (Option, error) {
+		format, err := sourceLocationFormatFromString(value)
+		if err != nil {
+			return nil, newConfigError(err)
+		}
+
+		return withSourceLocation(format), nil
+	}
+}
+
 // WithSourceLocationFromEnv sets the caller-location option based on either the specified environment variable env or
 // the defaultFormat if no environment variable is found.
 func WithSourceLocationFromEnv(env string, defaultFormat string) OptionLoader {
