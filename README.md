@@ -48,10 +48,10 @@ same format specification.
 
 ```go
 // Log string message at specific levels
-Debug(message string)
-Info(message string)
-Warning(message string)
-Error(message string)
+Debug(value ...interface{})
+Info(value ...interface{})
+Warning(value ...interface{})
+Error(value ...interface{})
 
 // Log formatted string message at specific levels, similar to log.Printf from standard library
 Debugf(format string, value ...interface{})

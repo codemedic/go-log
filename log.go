@@ -69,52 +69,95 @@ func (l Log) Fatalf(format string, value ...interface{}) {
 	os.Exit(1)
 }
 
-func (l Log) Debug(message string) {
+func (l Log) Debug(value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(Debug, "%s", message)
+	l.logger.Logf(Debug, "%s", fmt.Sprint(value...))
 }
 
-func (l Log) Info(message string) {
+func (l Log) Info(value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(Info, "%s", message)
+	l.logger.Logf(Info, "%s", fmt.Sprint(value...))
 }
 
-func (l Log) Warning(message string) {
+func (l Log) Warning(value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(Warning, "%s", message)
+	l.logger.Logf(Warning, "%s", fmt.Sprint(value...))
 }
 
-func (l Log) Error(message string) {
+func (l Log) Error(value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(Error, "%s", message)
+	l.logger.Logf(Error, "%s", fmt.Sprint(value...))
 }
 
-func (l Log) Print(message string) {
+func (l Log) Print(value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(l.logger.PrintLevel(), "%s", message)
+	l.logger.Logf(l.logger.PrintLevel(), "%s", fmt.Sprint(value...))
 }
 
-func (l Log) Fatal(message string) {
+func (l Log) Println(value ...interface{}) {
+	if l.logger == nil {
+		return
+	}
+
+	l.logger.Logf(l.logger.PrintLevel(), "%s", fmt.Sprint(value...))
+}
+
+func (l Log) Fatal(value ...interface{}) {
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", message)
+		l.logger.Logf(Error, "%s", fmt.Sprint(value...))
 	}
 
 	os.Exit(1)
+}
+
+func (l Log) Fatalln(value ...interface{}) {
+	if l.logger != nil {
+		l.logger.Logf(Error, "%s", fmt.Sprint(value...))
+	}
+
+	os.Exit(1)
+}
+
+func (l Log) Panic(value ...interface{}) {
+	s := fmt.Sprint(value...)
+	if l.logger != nil {
+		l.logger.Logf(Error, "%s", s)
+	}
+
+	panic(s)
+}
+
+func (l Log) Panicf(format string, value ...interface{}) {
+	s := fmt.Sprintf(format, value...)
+	if l.logger != nil {
+		l.logger.Logf(Error, "%s", s)
+	}
+
+	panic(s)
+}
+
+func (l Log) Panicln(value ...interface{}) {
+	s := fmt.Sprint(value...)
+	if l.logger != nil {
+		l.logger.Logf(Error, "%s", s)
+	}
+
+	panic(s)
 }
 
 // DebugEnabled checks if DEBUG level is enabled for the logger.
