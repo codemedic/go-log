@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	stdlog "log"
 	"os"
 )
@@ -54,7 +53,7 @@ func (l *stdLogger) PrintLevel() Level {
 func (l *stdLogger) Close() {
 	l.level = Disabled
 	// stop using the writer before closing it
-	l.logger.SetOutput(ioutil.Discard)
+	l.logger.SetOutput(io.Discard)
 	_ = l.writer.Close()
 }
 

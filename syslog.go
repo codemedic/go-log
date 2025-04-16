@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	stdlog "log"
 	"log/syslog"
 )
@@ -112,7 +112,7 @@ func NewSyslog(opt ...Option) (log Log, err error) {
 		l.loggers = append(l.loggers, logger)
 		l.closers = append(l.closers, func() {
 			// stop using the writer before closing it
-			logger.SetOutput(ioutil.Discard)
+			logger.SetOutput(io.Discard)
 			_ = w.Close()
 		})
 	}

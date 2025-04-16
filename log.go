@@ -166,10 +166,11 @@ func (l Log) Panicln(value ...interface{}) {
 // level is disabled.
 //
 // Example:
-//   if logger.DebugEnabled() {
-//     debugData := makeDebugData()
-//     logger.Debugf("debug data: %v", debugData)
-//   }
+//
+//	if logger.DebugEnabled() {
+//	  debugData := makeDebugData()
+//	  logger.Debugf("debug data: %v", debugData)
+//	}
 func (l Log) DebugEnabled() bool {
 	if l.logger == nil {
 		return false
@@ -179,7 +180,7 @@ func (l Log) DebugEnabled() bool {
 }
 
 // Close disables and closes the logger, freeing up any resources allocated to the logger.
-// Once closed the logger will be disabled but it will remain safe to use (free from panics).
+// Once closed the logger will be disabled, but it will remain safe to use (free from panics).
 func (l Log) Close() {
 	if l.logger != nil {
 		l.logger.Close()
