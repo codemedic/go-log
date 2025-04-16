@@ -1,5 +1,7 @@
 package log
 
+import "strings"
+
 type Level int
 
 const (
@@ -37,19 +39,27 @@ func (l Level) IsEnabled(threshold Level) bool {
 	return l >= threshold
 }
 
+func (l *Level) UnmarshalText(text []byte) error {
+	parsedLevel, err := levelFromString(string(text))
+	if err != nil {
+		return err
+	}
+	*l = parsedLevel
+	return nil
+}
+
 func levelFromString(str string) (Level, error) {
-	switch str {
-	case "error", "ERROR", "Error":
+	switch strings.ToLower(str) {
+	case "error":
 		return Error, nil
-	case "warning", "WARNING", "Warning":
+	case "warning":
 		return Warning, nil
-	case "info", "INFO", "Info":
+	case "info":
 		return Info, nil
-	case "debug", "DEBUG", "Debug":
+	case "debug":
 		return Debug, nil
-	case "disabled", "DISABLED", "Disabled", "":
+	case "disabled", "":
 		return Disabled, nil
 	}
-
 	return 0, ErrBadLevel
 }
