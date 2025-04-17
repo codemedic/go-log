@@ -2,24 +2,32 @@ package log
 
 import "fmt"
 
-type AssertMsg struct {
+type AssertMsg interface {
+	Level() Level
+	Format() string
+	Values() []interface{}
+	Message() string
+}
+
+type assertMsg struct {
 	level  Level
 	format string
 	values []interface{}
 }
 
-func (a *AssertMsg) Level() Level {
+func (a *assertMsg) Level() Level {
 	return a.level
 }
-func (a *AssertMsg) Format() string {
+func (a *assertMsg) Format() string {
 	return a.format
 }
-func (a *AssertMsg) Values() []interface{} {
+func (a *assertMsg) Values() []interface{} {
 	return a.values
 }
-func (a *AssertMsg) Message() string {
+func (a *assertMsg) Message() string {
 	return fmt.Sprintf(a.format, a.values...)
 }
+func (a *assertMsg) locked() {}
 
 type AssertMsgs []AssertMsg
 
@@ -41,7 +49,7 @@ func Assert(l Log) AssertMsgs {
 
 func (a AssertMsgs) Contains(level Level, msg string) bool {
 	for _, m := range a {
-		if m.level == level && m.Message() == msg {
+		if m.Level() == level && m.Message() == msg {
 			return true
 		}
 	}
@@ -51,7 +59,7 @@ func (a AssertMsgs) Contains(level Level, msg string) bool {
 
 func (a AssertMsgs) ContainsLevel(level Level) bool {
 	for _, m := range a {
-		if m.level == level {
+		if m.Level() == level {
 			return true
 		}
 	}
@@ -61,7 +69,7 @@ func (a AssertMsgs) ContainsLevel(level Level) bool {
 
 func (a AssertMsgs) ContainsFormat(level Level, format string) bool {
 	for _, m := range a {
-		if m.level == level && m.format == format {
+		if m.Level() == level && m.Format() == format {
 			return true
 		}
 	}

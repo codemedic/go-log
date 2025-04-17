@@ -27,7 +27,7 @@ func (a *assertLogger) Logf(level Level, format string, value ...interface{}) {
 	if a.level.IsEnabled(level) {
 		a.mu.Lock()
 		defer a.mu.Unlock()
-		a.msgs = append(a.msgs, AssertMsg{
+		a.msgs = append(a.msgs, &assertMsg{
 			level:  level,
 			format: format,
 			values: value,
