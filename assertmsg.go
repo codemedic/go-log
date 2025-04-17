@@ -7,6 +7,7 @@ type AssertMsg interface {
 	Format() string
 	Values() []interface{}
 	Message() string
+	String() string
 }
 
 type assertMsg struct {
@@ -27,7 +28,9 @@ func (a *assertMsg) Values() []interface{} {
 func (a *assertMsg) Message() string {
 	return fmt.Sprintf(a.format, a.values...)
 }
-func (a *assertMsg) locked() {}
+func (a *assertMsg) String() string {
+	return fmt.Sprintf("%s: %s", a.level.String(), a.Message())
+}
 
 type AssertMsgs []AssertMsg
 
