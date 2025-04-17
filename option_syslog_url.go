@@ -22,6 +22,10 @@ func (w withSyslogDaemonURL) applySyslog(l *syslogLogger) error {
 	return nil
 }
 
+func (w withSyslogDaemonURL) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withSyslogDaemonURL) applyStdLog(*stdLogger) error {
 	return ErrIncompatibleOption
 }

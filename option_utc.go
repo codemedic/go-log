@@ -4,6 +4,10 @@ import "log"
 
 type withUTCTimestamp bool
 
+func (w withUTCTimestamp) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withUTCTimestamp) applySyslog(l *syslogLogger) error {
 	l.flags.enable(log.LUTC, bool(w))
 	return nil

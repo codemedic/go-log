@@ -21,6 +21,10 @@ func sourceLocationFormatFromString(str string) (int, error) {
 
 type withSourceLocation int
 
+func (w withSourceLocation) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withSourceLocation) applySyslog(l *syslogLogger) error {
 	if w == 0 {
 		l.flags.enable(stdlog.Lshortfile|stdlog.Llongfile, false)

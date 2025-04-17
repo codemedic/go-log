@@ -4,6 +4,10 @@ import "log"
 
 type withMicrosecondsTimestamp bool
 
+func (w withMicrosecondsTimestamp) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withMicrosecondsTimestamp) applySyslog(l *syslogLogger) error {
 	l.flags.enable(log.Lmicroseconds, bool(w))
 	return nil

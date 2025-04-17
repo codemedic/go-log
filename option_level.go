@@ -4,6 +4,11 @@ import "os"
 
 type withLevel Level
 
+func (w withLevel) applyAssertLog(l *assertLogger) error {
+	l.level = Level(w)
+	return nil
+}
+
 func (w withLevel) applySyslog(l *syslogLogger) error {
 	l.level = Level(w)
 	return nil
@@ -49,6 +54,11 @@ func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 }
 
 type withPrintLevel Level
+
+func (w withPrintLevel) applyAssertLog(l *assertLogger) error {
+	l.printLevel = Level(w)
+	return nil
+}
 
 func (w withPrintLevel) applySyslog(l *syslogLogger) error {
 	l.printLevel = Level(w)

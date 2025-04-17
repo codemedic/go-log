@@ -9,6 +9,10 @@ type withWriter struct {
 	writer io.WriteCloser
 }
 
+func (w withWriter) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withWriter) applySyslog(*syslogLogger) error {
 	return ErrIncompatibleOption
 }

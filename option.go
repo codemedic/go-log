@@ -9,6 +9,7 @@ import (
 type Option interface {
 	stdLogOption
 	syslogOption
+	assertLogOption
 }
 
 func boolFromEnv(env string, defaultValue bool) (bool, error) {

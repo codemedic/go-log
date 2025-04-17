@@ -12,6 +12,10 @@ func (w withStdlogHandler) apply(l io.Writer) {
 	stdlog.SetOutput(l)
 }
 
+func (w withStdlogHandler) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withStdlogHandler) applySyslog(l *syslogLogger) error {
 	w.apply(l)
 	return nil

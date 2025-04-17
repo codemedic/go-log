@@ -281,3 +281,31 @@ func Example() {
 		l.Debugf("data: %d", data)
 	}
 }
+
+func ExampleNewAssertLog() {
+	l := golog.Must(golog.NewAssertLog(
+		golog.WithLevel(golog.Info),
+		golog.WithPrintLevel(golog.Info),
+	))
+	defer l.Close()
+
+	l.Debug("debug message")
+	l.Debugf("formatted %s message", "debug")
+
+	l.Info("informational message")
+	l.Infof("formatted %s message", "informational")
+
+	if !golog.Assert(l).Contains(golog.Debug, "debug message") {
+		// assertion failed
+	}
+
+	if !golog.Assert(l).ContainsFormat(golog.Debug, "formatted %s message") {
+		// assertion failed
+	}
+
+	if !golog.Assert(l).ContainsLevel(golog.Info) {
+		// assertion failed
+	}
+
+	golog.ClearAssert(l)
+}

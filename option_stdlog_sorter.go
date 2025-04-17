@@ -8,6 +8,10 @@ func defaultLogSorter(_ []byte) Level {
 
 type withStdlogSorter logSorter
 
+func (w withStdlogSorter) applyAssertLog(_ *assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withStdlogSorter) applyStdLog(l *stdLogger) error {
 	if w != nil {
 		l.stdSorter = logSorter(w)

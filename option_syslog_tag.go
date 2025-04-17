@@ -2,6 +2,10 @@ package log
 
 type withSyslogTag string
 
+func (w withSyslogTag) applyAssertLog(*assertLogger) error {
+	return ErrIncompatibleOption
+}
+
 func (w withSyslogTag) applyStdLog(*stdLogger) error {
 	return ErrIncompatibleOption
 }

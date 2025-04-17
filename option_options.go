@@ -8,6 +8,16 @@ func (o *options) append(opt ...Option) {
 	*o = append(*o, opt...)
 }
 
+func (o options) applyAssertLog(l *assertLogger) error {
+	for _, opt := range o {
+		if err := opt.applyAssertLog(l); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (o options) applySyslog(l *syslogLogger) error {
 	for _, opt := range o {
 		if err := opt.applySyslog(l); err != nil {
