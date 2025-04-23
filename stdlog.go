@@ -61,9 +61,9 @@ func (l *stdLogger) Level() Level {
 	return l.level
 }
 
-func (l *stdLogger) Logf(level Level, format string, value ...interface{}) {
+func (l *stdLogger) Logf(level Level, calldepth int, format string, value ...interface{}) {
 	if level.IsEnabled(l.level) {
-		_ = l.logger.Output(3, formatMessage(level, format, value...))
+		_ = l.logger.Output(calldepth, formatMessage(level, format, value...))
 	}
 }
 

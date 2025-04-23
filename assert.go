@@ -23,7 +23,7 @@ func (a *assertLogger) PrintLevel() Level {
 	return a.printLevel
 }
 
-func (a *assertLogger) Logf(level Level, format string, value ...interface{}) {
+func (a *assertLogger) Logf(level Level, _ int, format string, value ...interface{}) {
 	if a.level.IsEnabled(level) {
 		a.mu.Lock()
 		defer a.mu.Unlock()

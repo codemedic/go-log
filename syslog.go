@@ -63,13 +63,13 @@ func (s *syslogLogger) getLoggerByLevel(level Level) *stdlog.Logger {
 	return s.loggers[level-s.level]
 }
 
-func (s *syslogLogger) Logf(level Level, format string, value ...interface{}) {
+func (s *syslogLogger) Logf(level Level, calldepth int, format string, value ...interface{}) {
 	logger := s.getLoggerByLevel(level)
 	if logger == nil {
 		return
 	}
 
-	_ = logger.Output(3, fmt.Sprintf(format, value...))
+	_ = logger.Output(calldepth, fmt.Sprintf(format, value...))
 }
 
 var syslogDefaultOptions, _ = Options(

@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+const defaultCallDepth = 3
+
 // Logger interface provides means to extend this library
 type Logger interface {
 	// Level gives the current threshold of the logger
@@ -12,7 +14,7 @@ type Logger interface {
 	// PrintLevel gives the level at which log.Print logs
 	PrintLevel() Level
 	// Logf is the workhorse function that logs each line; works in a similar way to fmt.Printf
-	Logf(level Level, format string, value ...interface{})
+	Logf(level Level, calldepth int, format string, value ...interface{})
 	// Close closes the logger
 	Close()
 }
@@ -21,12 +23,20 @@ type Log struct {
 	logger Logger
 }
 
+func (l Log) Level() Level {
+	if l.logger == nil {
+		return Disabled
+	}
+
+	return l.logger.Level()
+}
+
 func (l Log) Debugf(format string, value ...interface{}) {
 	if l.logger == nil {
 		return
 	}
 
-	l.logger.Logf(Debug, format, value...)
+	l.logger.Logf(Debug, defaultCallDepth, format, value...)
 }
 
 func (l Log) Infof(format string, value ...interface{}) {
@@ -34,7 +44,7 @@ func (l Log) Infof(format string, value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Info, format, value...)
+	l.logger.Logf(Info, defaultCallDepth, format, value...)
 }
 
 func (l Log) Warningf(format string, value ...interface{}) {
@@ -42,7 +52,7 @@ func (l Log) Warningf(format string, value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Warning, format, value...)
+	l.logger.Logf(Warning, defaultCallDepth, format, value...)
 }
 
 func (l Log) Errorf(format string, value ...interface{}) {
@@ -50,7 +60,7 @@ func (l Log) Errorf(format string, value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Error, format, value...)
+	l.logger.Logf(Error, defaultCallDepth, format, value...)
 }
 
 func (l Log) Printf(format string, value ...interface{}) {
@@ -58,12 +68,12 @@ func (l Log) Printf(format string, value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(l.logger.PrintLevel(), format, value...)
+	l.logger.Logf(l.logger.PrintLevel(), defaultCallDepth, format, value...)
 }
 
 func (l Log) Fatalf(format string, value ...interface{}) {
 	if l.logger != nil {
-		l.logger.Logf(Error, format, value...)
+		l.logger.Logf(Error, defaultCallDepth, format, value...)
 	}
 
 	os.Exit(1)
@@ -74,7 +84,7 @@ func (l Log) Debug(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Debug, "%s", fmt.Sprint(value...))
+	l.logger.Logf(Debug, defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Info(value ...interface{}) {
@@ -82,7 +92,7 @@ func (l Log) Info(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Info, "%s", fmt.Sprint(value...))
+	l.logger.Logf(Info, defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Warning(value ...interface{}) {
@@ -90,7 +100,7 @@ func (l Log) Warning(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Warning, "%s", fmt.Sprint(value...))
+	l.logger.Logf(Warning, defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Error(value ...interface{}) {
@@ -98,7 +108,7 @@ func (l Log) Error(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(Error, "%s", fmt.Sprint(value...))
+	l.logger.Logf(Error, defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Print(value ...interface{}) {
@@ -106,7 +116,7 @@ func (l Log) Print(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(l.logger.PrintLevel(), "%s", fmt.Sprint(value...))
+	l.logger.Logf(l.logger.PrintLevel(), defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Println(value ...interface{}) {
@@ -114,12 +124,12 @@ func (l Log) Println(value ...interface{}) {
 		return
 	}
 
-	l.logger.Logf(l.logger.PrintLevel(), "%s", fmt.Sprint(value...))
+	l.logger.Logf(l.logger.PrintLevel(), defaultCallDepth, "%s", fmt.Sprint(value...))
 }
 
 func (l Log) Fatal(value ...interface{}) {
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", fmt.Sprint(value...))
+		l.logger.Logf(Error, defaultCallDepth, "%s", fmt.Sprint(value...))
 	}
 
 	os.Exit(1)
@@ -127,7 +137,7 @@ func (l Log) Fatal(value ...interface{}) {
 
 func (l Log) Fatalln(value ...interface{}) {
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", fmt.Sprint(value...))
+		l.logger.Logf(Error, defaultCallDepth, "%s", fmt.Sprint(value...))
 	}
 
 	os.Exit(1)
@@ -136,7 +146,7 @@ func (l Log) Fatalln(value ...interface{}) {
 func (l Log) Panic(value ...interface{}) {
 	s := fmt.Sprint(value...)
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", s)
+		l.logger.Logf(Error, defaultCallDepth, "%s", s)
 	}
 
 	panic(s)
@@ -145,7 +155,7 @@ func (l Log) Panic(value ...interface{}) {
 func (l Log) Panicf(format string, value ...interface{}) {
 	s := fmt.Sprintf(format, value...)
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", s)
+		l.logger.Logf(Error, defaultCallDepth, "%s", s)
 	}
 
 	panic(s)
@@ -154,7 +164,7 @@ func (l Log) Panicf(format string, value ...interface{}) {
 func (l Log) Panicln(value ...interface{}) {
 	s := fmt.Sprint(value...)
 	if l.logger != nil {
-		l.logger.Logf(Error, "%s", s)
+		l.logger.Logf(Error, defaultCallDepth, "%s", s)
 	}
 
 	panic(s)
