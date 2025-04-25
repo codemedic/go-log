@@ -7,6 +7,16 @@ GoLog adds level based logging to logger(s) from standard library.
 
 GoLog's API is designed to be expressive with sensible configuration defaults and to be easy to use.
 
+## Features
+
+- **Leveled Logging**: Provides `Debug`, `Info`, `Warning`, and `Error` levels for categorized logging.
+- **Customizable Print Level**: Default `log.Print` logs to `Debug` but can be customized with `WithPrintLevel`.
+- **Syslog Support**: Includes a `NewSyslog` constructor for syslog-based logging.
+- **Standard Logger Integration**: Handles logging via the standard library logger with customizable behavior.
+- **Sublogger Customizations**: Supports creating subloggers with `WithLevel`, `WithPrefix`, and `WithRateLimit` for fine-grained control.
+- **Options and Configuration**: Supports environment-based configuration like `WithLevelFromEnv` and `WithSourceLocationFromEnv`.
+- **Resource Management**: Ensures proper cleanup with `Close` methods.
+
 ## Installation
 
     go get -u github.com/codemedic/go-log
