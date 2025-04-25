@@ -1,25 +1,33 @@
 package log
 
-import "time"
+import (
+	"sync/atomic"
+	"time"
+)
 
 type withRateLimitLogger struct {
 	Logger
 	rateLimit       int64
 	periodSeconds   int64
-	periodStartTime int64
-	count           int64
+	periodStartTime atomic.Int64
+	count           atomic.Int64
+	dropped         atomic.Int64
 }
 
 func (l *withRateLimitLogger) Logf(level Level, calldepth int, format string, value ...interface{}) {
 	currentTime := time.Now().Unix()
-	if currentTime-l.periodStartTime > l.periodSeconds {
-		l.periodStartTime = currentTime
-		l.count = 0
+	if currentTime-l.periodStartTime.Load() > l.periodSeconds {
+		if l.periodStartTime.CompareAndSwap(l.periodStartTime.Load(), currentTime) {
+			l.count.Store(0)
+			l.dropped.Store(0)
+		}
 	}
 
-	if l.count < l.rateLimit {
-		l.count++
+	if l.count.Load() < l.rateLimit {
+		l.count.Add(1)
 		l.Logger.Logf(level, calldepth+1, format, value...)
+	} else if l.dropped.Add(1) == 1 {
+		l.Logger.Logf(Info, calldepth+1, "log rate limit exceeded: %d message(s) dropped in the last %d second(s)", l.rateLimit, l.periodSeconds)
 	}
 }
 
