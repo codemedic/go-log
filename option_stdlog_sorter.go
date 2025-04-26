@@ -2,10 +2,6 @@ package log
 
 type logSorter func([]byte) Level
 
-func defaultLogSorter(_ []byte) Level {
-	return Info
-}
-
 type StdLogSorterSetter interface {
 	SetStdLogSorter(logSorter)
 }

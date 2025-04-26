@@ -29,12 +29,12 @@ func (w withLevel) Apply(l Logger) error {
 	return nil
 }
 
-// WithLevel specifies the level for loggers.
+// WithLevel specifies the level threshold for the logger. The level is used to determine whether a message should be logged or not.
 func WithLevel(level Level) Option {
 	return withLevel(level)
 }
 
-// WithLevelString specifies the level for loggers as a string.
+// WithLevelString specifies the level for loggers as a string; useful for configuration files or command-line arguments.
 func WithLevelString(str string) OptionLoader {
 	return func() (Option, error) {
 		level, err := levelFromString(str)
@@ -46,8 +46,7 @@ func WithLevelString(str string) OptionLoader {
 	}
 }
 
-// WithLevelFromEnv makes a WithLevel option based on the specified environment variable env or defaultLevel if no
-// environment variable was found.
+// WithLevelFromEnv makes a WithLevel option based on the specified environment variable. If the environment variable is not found, the defaultLevel is used.
 func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 	return func() (Option, error) {
 		level := defaultLevel

@@ -60,7 +60,7 @@ func (s *syslogLogger) Logf(level Level, calldepth int, format string, value ...
 }
 
 var syslogDefaultOptions, _ = Options(
-	commonOptions,
+	CommonOptions,
 	WithUTCTimestamp(false),
 	WithMicrosecondsTimestamp(false),
 )

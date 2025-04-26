@@ -8,16 +8,6 @@ import (
 	"os"
 )
 
-var commonOptions, _ = Options(
-	WithUTCTimestamp,
-	WithMicrosecondsTimestamp,
-	WithSourceLocationShort,
-	WithLevel(Debug),
-	WithPrintLevel(Debug),
-	WithStdlogHandler,
-	WithStdlogSorter(defaultLogSorter),
-)
-
 func formatMessage(level Level, format string, value ...interface{}) string {
 	return fmt.Sprintf(level.String()+": "+format, value...)
 }
@@ -68,7 +58,7 @@ func New(opt ...Option) (log Log, err error) {
 	}
 
 	// apply default options first
-	if err = commonOptions.Apply(l); err != nil {
+	if err = CommonOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}
