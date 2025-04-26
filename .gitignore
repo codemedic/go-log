@@ -1,1 +1,4 @@
 /.goenv
+/test-logfile.log
+*.pprof
+/.idea/

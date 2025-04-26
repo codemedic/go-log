@@ -4,17 +4,11 @@ import "log"
 
 type withUTCTimestamp bool
 
-func (w withUTCTimestamp) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
+func (w withUTCTimestamp) Apply(l Logger) error {
+	if setter, ok := l.(FlagSetter); ok {
+		setter.SetFlags(log.LUTC, bool(w))
+	}
 
-func (w withUTCTimestamp) applySyslog(l *syslogLogger) error {
-	l.flags.enable(log.LUTC, bool(w))
-	return nil
-}
-
-func (w withUTCTimestamp) applyStdLog(l *stdLogger) error {
-	l.flags.enable(log.LUTC, bool(w))
 	return nil
 }
 

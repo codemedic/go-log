@@ -7,9 +7,7 @@ import (
 
 // Option provides the interface through which all loggers can be configured.
 type Option interface {
-	stdLogOption
-	syslogOption
-	assertLogOption
+	Apply(l Logger) error
 }
 
 func boolFromEnv(env string, defaultValue bool) (bool, error) {
@@ -25,3 +23,15 @@ func boolFromEnv(env string, defaultValue bool) (bool, error) {
 
 	return bo, nil
 }
+
+var CommonOptions, _ = Options(
+	WithUTCTimestamp,
+	WithMicrosecondsTimestamp,
+	WithSourceLocationShort,
+	WithLevel(Debug),
+	WithPrintLevel(Info), // same level as the default for stdlog
+	WithStdlogHandler,
+	WithStdlogSorter(func(_ []byte) Level {
+		return Info
+	}),
+)

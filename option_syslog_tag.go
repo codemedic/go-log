@@ -1,17 +1,28 @@
 package log
 
+type SyslogTagSetter interface {
+	SetSyslogTag(tag string)
+}
+
+type SyslogTag struct {
+	tag string
+}
+
+func (s *SyslogTag) SetSyslogTag(tag string) {
+	s.tag = tag
+}
+
+func (s *SyslogTag) GetSyslogTag() string {
+	return s.tag
+}
+
 type withSyslogTag string
 
-func (w withSyslogTag) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
+func (w withSyslogTag) Apply(l Logger) error {
+	if setter, ok := l.(SyslogTagSetter); ok {
+		setter.SetSyslogTag(string(w))
+	}
 
-func (w withSyslogTag) applyStdLog(*stdLogger) error {
-	return ErrIncompatibleOption
-}
-
-func (w withSyslogTag) applySyslog(l *syslogLogger) error {
-	l.tag = string(w)
 	return nil
 }
 

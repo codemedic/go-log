@@ -7,26 +7,21 @@ import (
 	"log/syslog"
 )
 
-type syslogOption interface {
-	applySyslog(*syslogLogger) error
-}
-
 type syslogLogger struct {
-	level      Level
-	flags      flags
-	printLevel Level
-	tag        string
-	addr       string
-	network    string
-	loggers    []*stdlog.Logger
-	closers    []func()
-	stdHandler bool
-	stdSorter  logSorter
+	LevelledLogger
+	PrintLevelledLogger
+	StdLogSorter
+	StdLogFlags
+	SyslogTag
+	addr    string
+	network string
+	loggers []*stdlog.Logger
+	closers []func()
 }
 
 // Write satisfies io.Writer interface so that syslogLogger can be used as writer for the standard global logger.
 func (s *syslogLogger) Write(p []byte) (n int, err error) {
-	level := s.stdSorter(p)
+	level := s.SortStdlog(s.PrintLevel(), p)
 	logger := s.getLoggerByLevel(level)
 	if logger == nil {
 		return
@@ -36,19 +31,11 @@ func (s *syslogLogger) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (s *syslogLogger) PrintLevel() Level {
-	return s.printLevel
-}
-
 func (s *syslogLogger) Close() {
 	s.level = Disabled
 	for _, closer := range s.closers {
 		closer()
 	}
-}
-
-func (s *syslogLogger) Level() Level {
-	return s.level
 }
 
 func (s *syslogLogger) getLoggerByLevel(level Level) *stdlog.Logger {
@@ -72,8 +59,8 @@ func (s *syslogLogger) Logf(level Level, calldepth int, format string, value ...
 	_ = logger.Output(calldepth, fmt.Sprintf(format, value...))
 }
 
-var syslogDefaultOptions, _ = Options(
-	commonOptions,
+var SyslogDefaultOptions, _ = Options(
+	CommonOptions,
 	WithUTCTimestamp(false),
 	WithMicrosecondsTimestamp(false),
 )
@@ -83,14 +70,14 @@ func NewSyslog(opt ...Option) (log Log, err error) {
 	l := &syslogLogger{}
 
 	// apply default options first
-	if err = syslogDefaultOptions.applySyslog(l); err != nil {
+	if err = SyslogDefaultOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
-		if err = o.applySyslog(l); err != nil {
+		if err = o.Apply(l); err != nil {
 			err = newConfigError(err)
 			return
 		}

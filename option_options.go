@@ -4,38 +4,18 @@ import "fmt"
 
 type options []Option
 
+func (o options) Apply(l Logger) error {
+	for _, opt := range o {
+		if err := opt.Apply(l); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (o *options) append(opt ...Option) {
 	*o = append(*o, opt...)
-}
-
-func (o options) applyAssertLog(l *assertLogger) error {
-	for _, opt := range o {
-		if err := opt.applyAssertLog(l); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (o options) applySyslog(l *syslogLogger) error {
-	for _, opt := range o {
-		if err := opt.applySyslog(l); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (o options) applyStdLog(l *stdLogger) error {
-	for _, opt := range o {
-		if err := opt.applyStdLog(l); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 type OptionLoader func() (Option, error)
@@ -46,18 +26,17 @@ func Options(opt ...interface{}) (Option, error) {
 	opts := options{}
 	for _, o := range opt {
 		switch o := o.(type) {
-		case Option:
+		case Option: // static option
 			opts.append(o)
-		case OptionLoader:
+		case OptionLoader: // dynamic option loader
 			lo, err := o()
 			if err != nil {
 				return nil, err
 			}
-
 			opts.append(lo)
-		case func() Option:
+		case func() Option: // static option loader
 			opts.append(o())
-		case func(bool) Option:
+		case func(bool) Option: // static option loader with boolean
 			opts.append(o(true))
 		default:
 			return nil, ErrUnknownOption

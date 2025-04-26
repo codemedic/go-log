@@ -8,45 +8,31 @@ import (
 	"os"
 )
 
-var commonOptions, _ = Options(
-	WithUTCTimestamp,
-	WithMicrosecondsTimestamp,
-	WithSourceLocationShort,
-	WithLevel(Debug),
-	WithPrintLevel(Debug),
-	WithStdlogHandler,
-	WithStdlogSorter(defaultLogSorter),
-)
-
-type stdLogOption interface {
-	applyStdLog(*stdLogger) error
-}
-
 func formatMessage(level Level, format string, value ...interface{}) string {
 	return fmt.Sprintf(level.String()+": "+format, value...)
 }
 
 type stdLogger struct {
-	level      Level
-	flags      flags
-	printLevel Level
-	writer     io.WriteCloser
-	logger     *stdlog.Logger
-	stdSorter  logSorter
+	LevelledLogger
+	PrintLevelledLogger
+	StdLogSorter
+	StdLogFlags
+	writer io.WriteCloser
+	logger *stdlog.Logger
+}
+
+func (l *stdLogger) SetWriteCloser(wc io.WriteCloser) {
+	l.writer = wc
 }
 
 // Write satisfies io.Writer interface so that stdLogger can be used as writer for the standard global logger.
 func (l *stdLogger) Write(p []byte) (_ int, err error) {
-	level := l.stdSorter(p)
+	level := l.SortStdlog(l.PrintLevel(), p)
 	if level.IsEnabled(l.level) {
 		err = l.logger.Output(4, formatMessage(level, "%s", string(p)))
 	}
 
 	return
-}
-
-func (l *stdLogger) PrintLevel() Level {
-	return l.printLevel
 }
 
 // Close disables and closed the logger, freeing up resources.
@@ -55,10 +41,6 @@ func (l *stdLogger) Close() {
 	// stop using the writer before closing it
 	l.logger.SetOutput(io.Discard)
 	_ = l.writer.Close()
-}
-
-func (l *stdLogger) Level() Level {
-	return l.level
 }
 
 func (l *stdLogger) Logf(level Level, calldepth int, format string, value ...interface{}) {
@@ -70,18 +52,20 @@ func (l *stdLogger) Logf(level Level, calldepth int, format string, value ...int
 // New creates a new logger with the specified options.
 func New(opt ...Option) (log Log, err error) {
 	l := &stdLogger{
-		flags: stdlog.LstdFlags,
+		StdLogFlags: StdLogFlags{
+			flags: stdlog.LstdFlags,
+		},
 	}
 
 	// apply default options first
-	if err = commonOptions.applyStdLog(l); err != nil {
+	if err = CommonOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
-		if err = o.applyStdLog(l); err != nil {
+		if err = o.Apply(l); err != nil {
 			err = newConfigError(err)
 			return
 		}
