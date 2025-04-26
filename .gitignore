@@ -1,1 +1,3 @@
 /.goenv
+/test-logfile.log
+*.pprof
