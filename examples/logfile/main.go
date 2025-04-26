@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	l := golog.Must(golog.NewLogfile("/tmp/test-logfile.log", 0644,
+	l := golog.Must(golog.NewLogfile("test-logfile.log", 0644,
 		golog.OptionsMust(golog.Options(
 			golog.WithLevelFromEnv("LOG_LEVEL", golog.Info),
 			golog.WithUTCTimestampFromEnv("LOG_UTC", true),
