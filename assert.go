@@ -4,10 +4,6 @@ import (
 	"sync"
 )
 
-type assertLogOption interface {
-	applyAssertLog(logger *assertLogger) error
-}
-
 type assertLogger struct {
 	level      Level
 	printLevel Level
@@ -52,7 +48,7 @@ func NewAssertLog(opt ...Option) (log Log, err error) {
 
 	// apply any specified options
 	for _, o := range opt {
-		if err = o.applyAssertLog(l); err != nil {
+		if err = o.Apply(l); err != nil {
 			err = newConfigError(err)
 			return
 		}

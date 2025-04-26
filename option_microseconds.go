@@ -4,17 +4,11 @@ import "log"
 
 type withMicrosecondsTimestamp bool
 
-func (w withMicrosecondsTimestamp) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
+func (w withMicrosecondsTimestamp) Apply(l Logger) error {
+	if setter, ok := l.(FlagSetter); ok {
+		setter.SetFlags(log.Lmicroseconds, bool(w))
+	}
 
-func (w withMicrosecondsTimestamp) applySyslog(l *syslogLogger) error {
-	l.flags.enable(log.Lmicroseconds, bool(w))
-	return nil
-}
-
-func (w withMicrosecondsTimestamp) applyStdLog(l *stdLogger) error {
-	l.flags.enable(log.Lmicroseconds, bool(w))
 	return nil
 }
 

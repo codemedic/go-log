@@ -4,42 +4,43 @@ import (
 	"fmt"
 	stdlog "log"
 	"os"
+	"strings"
 )
 
 func sourceLocationFormatFromString(str string) (int, error) {
-	switch str {
-	case "DISABLED", "Disabled", "disabled":
+	switch strings.ToLower(str) {
+	case "disabled":
 		return 0, nil
-	case "SHORT", "Short", "short":
+	case "short":
 		return stdlog.Lshortfile, nil
-	case "LONG", "Long", "long":
+	case "long":
 		return stdlog.Lshortfile, nil
 	}
 
 	return 0, fmt.Errorf("unknown source-location format '%s'", str)
 }
 
+type FlagSetter interface {
+	SetFlags(flag int, enable bool)
+}
+
+type StdLogFlags struct {
+	flags flags
+}
+
+func (f *StdLogFlags) SetFlags(flag int, enable bool) {
+	f.flags.enable(flag, enable)
+}
+
 type withSourceLocation int
 
-func (w withSourceLocation) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
-
-func (w withSourceLocation) applySyslog(l *syslogLogger) error {
-	if w == 0 {
-		l.flags.enable(stdlog.Lshortfile|stdlog.Llongfile, false)
-	} else {
-		l.flags.enable(int(w), true)
-	}
-
-	return nil
-}
-
-func (w withSourceLocation) applyStdLog(l *stdLogger) error {
-	if w == 0 {
-		l.flags.enable(stdlog.Lshortfile|stdlog.Llongfile, false)
-	} else {
-		l.flags.enable(int(w), true)
+func (w withSourceLocation) Apply(l Logger) error {
+	if setter, ok := l.(FlagSetter); ok {
+		if w == 0 {
+			setter.SetFlags(stdlog.Lshortfile|stdlog.Llongfile, false)
+		} else {
+			setter.SetFlags(int(w), true)
+		}
 	}
 
 	return nil

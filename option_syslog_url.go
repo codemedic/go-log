@@ -5,29 +5,43 @@ import (
 	"regexp"
 )
 
+type SyslogURLSetter interface {
+	SetSyslogURL(network, addr string)
+}
+
+type SyslogURL struct {
+	// Network is the network type (tcp, udp, unixgram, unixpacket).
+	network string
+	// Addr is the address of the syslog daemon.
+	addr string
+}
+
+func (s *SyslogURL) SetSyslogURL(network, addr string) {
+	s.network = network
+	s.addr = addr
+}
+
 type withSyslogDaemonURL string
 
-func (w withSyslogDaemonURL) applySyslog(l *syslogLogger) error {
-	if w == "" {
-		l.network, l.addr = "", ""
-		return nil
+func (w withSyslogDaemonURL) Apply(l Logger) error {
+	if setter, ok := l.(SyslogURLSetter); ok {
+		network := ""
+		addr := ""
+
+		if w != "" {
+			matches := syslogDaemonURLRegex.FindStringSubmatch(string(w))
+			if len(matches) > 0 {
+				network = matches[1]
+				addr = matches[2]
+			} else {
+				return ErrBadSyslogDaemonURL
+			}
+		}
+
+		setter.SetSyslogURL(network, addr)
 	}
 
-	matches := syslogDaemonURLRegex.FindStringSubmatch(string(w))
-	if len(matches) == 0 {
-		return ErrBadSyslogDaemonURL
-	}
-
-	l.network, l.addr = matches[1], matches[2]
 	return nil
-}
-
-func (w withSyslogDaemonURL) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
-
-func (w withSyslogDaemonURL) applyStdLog(*stdLogger) error {
-	return ErrIncompatibleOption
 }
 
 // WithSyslogDaemonURL specifies the syslog daemon URL for syslog logger.

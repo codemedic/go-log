@@ -7,21 +7,16 @@ import (
 	"log/syslog"
 )
 
-type syslogOption interface {
-	applySyslog(*syslogLogger) error
-}
-
 type syslogLogger struct {
-	level      Level
-	flags      flags
-	printLevel Level
-	tag        string
-	addr       string
-	network    string
-	loggers    []*stdlog.Logger
-	closers    []func()
-	stdHandler bool
-	stdSorter  logSorter
+	LevelledLogger
+	PrintLevelledLogger
+	StdLogSorter
+	StdLogFlags
+	SyslogTag
+	addr    string
+	network string
+	loggers []*stdlog.Logger
+	closers []func()
 }
 
 // Write satisfies io.Writer interface so that syslogLogger can be used as writer for the standard global logger.
@@ -83,14 +78,14 @@ func NewSyslog(opt ...Option) (log Log, err error) {
 	l := &syslogLogger{}
 
 	// apply default options first
-	if err = syslogDefaultOptions.applySyslog(l); err != nil {
+	if err = syslogDefaultOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
-		if err = o.applySyslog(l); err != nil {
+		if err = o.Apply(l); err != nil {
 			err = newConfigError(err)
 			return
 		}

@@ -5,20 +5,19 @@ import (
 	"os"
 )
 
+type WriteCloserSetter interface {
+	SetWriteCloser(w io.WriteCloser)
+}
+
 type withWriter struct {
 	writer io.WriteCloser
 }
 
-func (w withWriter) applyAssertLog(*assertLogger) error {
-	return ErrIncompatibleOption
-}
+func (w withWriter) Apply(l Logger) error {
+	if setter, ok := l.(WriteCloserSetter); ok {
+		setter.SetWriteCloser(w.writer)
+	}
 
-func (w withWriter) applySyslog(*syslogLogger) error {
-	return ErrIncompatibleOption
-}
-
-func (w withWriter) applyStdLog(l *stdLogger) error {
-	l.writer = w.writer
 	return nil
 }
 

@@ -18,21 +18,21 @@ var commonOptions, _ = Options(
 	WithStdlogSorter(defaultLogSorter),
 )
 
-type stdLogOption interface {
-	applyStdLog(*stdLogger) error
-}
-
 func formatMessage(level Level, format string, value ...interface{}) string {
 	return fmt.Sprintf(level.String()+": "+format, value...)
 }
 
 type stdLogger struct {
-	level      Level
-	flags      flags
-	printLevel Level
-	writer     io.WriteCloser
-	logger     *stdlog.Logger
-	stdSorter  logSorter
+	LevelledLogger
+	PrintLevelledLogger
+	StdLogSorter
+	StdLogFlags
+	writer io.WriteCloser
+	logger *stdlog.Logger
+}
+
+func (l *stdLogger) SetWriteCloser(wc io.WriteCloser) {
+	l.writer = wc
 }
 
 // Write satisfies io.Writer interface so that stdLogger can be used as writer for the standard global logger.
@@ -70,18 +70,20 @@ func (l *stdLogger) Logf(level Level, calldepth int, format string, value ...int
 // New creates a new logger with the specified options.
 func New(opt ...Option) (log Log, err error) {
 	l := &stdLogger{
-		flags: stdlog.LstdFlags,
+		StdLogFlags: StdLogFlags{
+			flags: stdlog.LstdFlags,
+		},
 	}
 
 	// apply default options first
-	if err = commonOptions.applyStdLog(l); err != nil {
+	if err = commonOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}
 
 	// apply any specified options
 	for _, o := range opt {
-		if err = o.applyStdLog(l); err != nil {
+		if err = o.Apply(l); err != nil {
 			err = newConfigError(err)
 			return
 		}

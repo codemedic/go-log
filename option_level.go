@@ -2,20 +2,26 @@ package log
 
 import "os"
 
+type LevelSetter interface {
+	SetLevel(level Level) error
+}
+
+type LevelledLogger struct {
+	level Level
+}
+
+func (l *LevelledLogger) SetLevel(level Level) error {
+	l.level = level
+	return nil
+}
+
 type withLevel Level
 
-func (w withLevel) applyAssertLog(l *assertLogger) error {
-	l.level = Level(w)
-	return nil
-}
+func (w withLevel) Apply(l Logger) error {
+	if setter, ok := l.(LevelSetter); ok {
+		return setter.SetLevel(Level(w))
+	}
 
-func (w withLevel) applySyslog(l *syslogLogger) error {
-	l.level = Level(w)
-	return nil
-}
-
-func (w withLevel) applyStdLog(l *stdLogger) error {
-	l.level = Level(w)
 	return nil
 }
 
@@ -53,20 +59,28 @@ func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 	}
 }
 
+// ---------------------------------------------------------
+
+type PrintLevelSetter interface {
+	SetPrintLevel(level Level) error
+}
+
+type PrintLevelledLogger struct {
+	printLevel Level
+}
+
+func (l *PrintLevelledLogger) SetPrintLevel(level Level) error {
+	l.printLevel = level
+	return nil
+}
+
 type withPrintLevel Level
 
-func (w withPrintLevel) applyAssertLog(l *assertLogger) error {
-	l.printLevel = Level(w)
-	return nil
-}
+func (w withPrintLevel) Apply(l Logger) error {
+	if setter, ok := l.(PrintLevelSetter); ok {
+		return setter.SetPrintLevel(Level(w))
+	}
 
-func (w withPrintLevel) applySyslog(l *syslogLogger) error {
-	l.printLevel = Level(w)
-	return nil
-}
-
-func (w withPrintLevel) applyStdLog(l *stdLogger) error {
-	l.printLevel = Level(w)
 	return nil
 }
 
