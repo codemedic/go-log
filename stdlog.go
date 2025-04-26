@@ -27,7 +27,7 @@ func (l *stdLogger) SetWriteCloser(wc io.WriteCloser) {
 
 // Write satisfies io.Writer interface so that stdLogger can be used as writer for the standard global logger.
 func (l *stdLogger) Write(p []byte) (_ int, err error) {
-	level := l.stdSorter(p)
+	level := l.SortStdlog(l.PrintLevel(), p)
 	if level.IsEnabled(l.level) {
 		err = l.logger.Output(4, formatMessage(level, "%s", string(p)))
 	}

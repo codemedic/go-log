@@ -21,7 +21,7 @@ type syslogLogger struct {
 
 // Write satisfies io.Writer interface so that syslogLogger can be used as writer for the standard global logger.
 func (s *syslogLogger) Write(p []byte) (n int, err error) {
-	level := s.stdSorter(p)
+	level := s.SortStdlog(s.PrintLevel(), p)
 	logger := s.getLoggerByLevel(level)
 	if logger == nil {
 		return
@@ -59,7 +59,7 @@ func (s *syslogLogger) Logf(level Level, calldepth int, format string, value ...
 	_ = logger.Output(calldepth, fmt.Sprintf(format, value...))
 }
 
-var syslogDefaultOptions, _ = Options(
+var SyslogDefaultOptions, _ = Options(
 	CommonOptions,
 	WithUTCTimestamp(false),
 	WithMicrosecondsTimestamp(false),
@@ -70,7 +70,7 @@ func NewSyslog(opt ...Option) (log Log, err error) {
 	l := &syslogLogger{}
 
 	// apply default options first
-	if err = syslogDefaultOptions.Apply(l); err != nil {
+	if err = SyslogDefaultOptions.Apply(l); err != nil {
 		err = newConfigError(err)
 		return
 	}

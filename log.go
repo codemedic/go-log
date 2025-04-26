@@ -23,6 +23,10 @@ type Log struct {
 	logger Logger
 }
 
+func NewWithLogger(logger Logger) Log {
+	return Log{logger: logger}
+}
+
 func (l Log) Level() Level {
 	if l.logger == nil {
 		return Disabled

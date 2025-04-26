@@ -12,6 +12,10 @@ func (s *SyslogTag) SetSyslogTag(tag string) {
 	s.tag = tag
 }
 
+func (s *SyslogTag) GetSyslogTag() string {
+	return s.tag
+}
+
 type withSyslogTag string
 
 func (w withSyslogTag) Apply(l Logger) error {
