@@ -45,20 +45,12 @@ func (l *stdLogger) Write(p []byte) (_ int, err error) {
 	return
 }
 
-func (l *stdLogger) PrintLevel() Level {
-	return l.printLevel
-}
-
 // Close disables and closed the logger, freeing up resources.
 func (l *stdLogger) Close() {
 	l.level = Disabled
 	// stop using the writer before closing it
 	l.logger.SetOutput(io.Discard)
 	_ = l.writer.Close()
-}
-
-func (l *stdLogger) Level() Level {
-	return l.level
 }
 
 func (l *stdLogger) Logf(level Level, calldepth int, format string, value ...interface{}) {

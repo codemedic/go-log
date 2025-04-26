@@ -31,19 +31,11 @@ func (s *syslogLogger) Write(p []byte) (n int, err error) {
 	return
 }
 
-func (s *syslogLogger) PrintLevel() Level {
-	return s.printLevel
-}
-
 func (s *syslogLogger) Close() {
 	s.level = Disabled
 	for _, closer := range s.closers {
 		closer()
 	}
-}
-
-func (s *syslogLogger) Level() Level {
-	return s.level
 }
 
 func (s *syslogLogger) getLoggerByLevel(level Level) *stdlog.Logger {

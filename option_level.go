@@ -3,23 +3,27 @@ package log
 import "os"
 
 type LevelSetter interface {
-	SetLevel(level Level) error
+	SetLevel(level Level)
 }
 
 type LevelledLogger struct {
 	level Level
 }
 
-func (l *LevelledLogger) SetLevel(level Level) error {
+func (l *LevelledLogger) SetLevel(level Level) {
 	l.level = level
-	return nil
+}
+
+// Level returns the level of the logger. If the logger is nil, it returns Disabled.
+func (l *LevelledLogger) Level() Level {
+	return l.level
 }
 
 type withLevel Level
 
 func (w withLevel) Apply(l Logger) error {
 	if setter, ok := l.(LevelSetter); ok {
-		return setter.SetLevel(Level(w))
+		setter.SetLevel(Level(w))
 	}
 
 	return nil
@@ -62,23 +66,26 @@ func WithLevelFromEnv(env string, defaultLevel Level) OptionLoader {
 // ---------------------------------------------------------
 
 type PrintLevelSetter interface {
-	SetPrintLevel(level Level) error
+	SetPrintLevel(level Level)
 }
 
 type PrintLevelledLogger struct {
 	printLevel Level
 }
 
-func (l *PrintLevelledLogger) SetPrintLevel(level Level) error {
+func (l *PrintLevelledLogger) SetPrintLevel(level Level) {
 	l.printLevel = level
-	return nil
+}
+
+func (s *PrintLevelledLogger) PrintLevel() Level {
+	return s.printLevel
 }
 
 type withPrintLevel Level
 
 func (w withPrintLevel) Apply(l Logger) error {
 	if setter, ok := l.(PrintLevelSetter); ok {
-		return setter.SetPrintLevel(Level(w))
+		setter.SetPrintLevel(Level(w))
 	}
 
 	return nil

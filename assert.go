@@ -5,18 +5,10 @@ import (
 )
 
 type assertLogger struct {
-	level      Level
-	printLevel Level
-	msgs       AssertMsgs
-	mu         sync.Mutex
-}
-
-func (a *assertLogger) Level() Level {
-	return a.level
-}
-
-func (a *assertLogger) PrintLevel() Level {
-	return a.printLevel
+	LevelledLogger
+	PrintLevelledLogger
+	msgs AssertMsgs
+	mu   sync.Mutex
 }
 
 func (a *assertLogger) Logf(level Level, _ int, format string, value ...interface{}) {
@@ -41,10 +33,9 @@ func (a *assertLogger) Close() {
 }
 
 func NewAssertLog(opt ...Option) (log Log, err error) {
-	l := &assertLogger{
-		level:      Debug,
-		printLevel: Debug,
-	}
+	l := &assertLogger{}
+	l.SetLevel(Debug)
+	l.SetPrintLevel(Debug)
 
 	// apply any specified options
 	for _, o := range opt {
